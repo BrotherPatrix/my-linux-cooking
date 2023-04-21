@@ -62,17 +62,40 @@ function step2() {
 function set_jdks() {
 	log INFO "Setting up JDKs ..."
 
-	wget -O /home/${USER}/.cooking/jdk17-adoptium.tar.gz https://github.com/adoptium/temurin17-binaries/releases/download/jdk-17.0.7%2B7/OpenJDK17U-jdk_x64_linux_hotspot_17.0.7_7.tar.gz
+	## Java 17
+	wget -O /home/${USER}/.cooking/jdk17-adoptium.tar.gz 'https://github.com/adoptium/temurin17-binaries/releases/download/jdk-17.0.7%2B7/OpenJDK17U-jdk_x64_linux_hotspot_17.0.7_7.tar.gz'
 	mkdir -p /home/${USER}/kits/dev/jdks/jdk17-adoptium
 	tar -xzf /home/${USER}/.cooking/jdk17-adoptium.tar.gz -C /home/${USER}/kits/dev/jdks/jdk17-adoptium --strip-components=1
 
-	wget -O /home/${USER}/.cooking/jdk11-adoptium.tar.gz https://github.com/adoptium/temurin11-binaries/releases/download/jdk-11.0.19%2B7/OpenJDK11U-jdk_x64_linux_hotspot_11.0.19_7.tar.gz
+	wget -O /home/${USER}/.cooking/jdk17-zulu.tar.gz 'https://cdn.azul.com/zulu/bin/zulu17.42.19-ca-jdk17.0.7-linux_x64.tar.gz'
+	mkdir -p /home/${USER}/kits/dev/jdks/jdk17-zulu
+	tar -xzf /home/${USER}/.cooking/jdk17-zulu.tar.gz -C /home/${USER}/kits/dev/jdks/jdk17-zulu --strip-components=1
+
+	wget -O /home/${USER}/.cooking/jdk17-graalvm.tar.gz 'https://github.com/graalvm/graalvm-ce-builds/releases/download/vm-22.3.1/graalvm-ce-java17-linux-amd64-22.3.1.tar.gz'
+	mkdir -p /home/${USER}/kits/dev/jdks/jdk17-graalvm
+	tar -xzf /home/${USER}/.cooking/jdk17-graalvm.tar.gz -C /home/${USER}/kits/dev/jdks/jdk17-graalvm --strip-components=1
+
+	## Java 11
+	wget -O /home/${USER}/.cooking/jdk11-adoptium.tar.gz 'https://github.com/adoptium/temurin11-binaries/releases/download/jdk-11.0.19%2B7/OpenJDK11U-jdk_x64_linux_hotspot_11.0.19_7.tar.gz'
 	mkdir -p /home/${USER}/kits/dev/jdks/jdk11-adoptium
 	tar -xzf /home/${USER}/.cooking/jdk11-adoptium.tar.gz -C /home/${USER}/kits/dev/jdks/jdk11-adoptium --strip-components=1
 
-	wget -O /home/${USER}/.cooking/jdk8-adoptium.tar.gz https://github.com/adoptium/temurin8-binaries/releases/download/jdk8u362-b09/OpenJDK8U-jdk_x64_linux_hotspot_8u362b09.tar.gz
+	wget -O /home/${USER}/.cooking/jdk11-zulu.tar.gz 'https://cdn.azul.com/zulu/bin/zulu11.64.19-ca-jdk11.0.19-linux_x64.tar.gz'
+	mkdir -p /home/${USER}/kits/dev/jdks/jdk11-zulu
+	tar -xzf /home/${USER}/.cooking/jdk11-zulu.tar.gz -C /home/${USER}/kits/dev/jdks/jdk11-zulu --strip-components=1
+
+	wget -O /home/${USER}/.cooking/jdk11-graalvm.tar.gz 'https://github.com/graalvm/graalvm-ce-builds/releases/download/vm-22.3.1/graalvm-ce-java11-linux-amd64-22.3.1.tar.gz'
+	mkdir -p /home/${USER}/kits/dev/jdks/jdk11-graalvm
+	tar -xzf /home/${USER}/.cooking/jdk11-graalvm.tar.gz -C /home/${USER}/kits/dev/jdks/jdk11-graalvm --strip-components=1
+
+	## Java 8
+	wget -O /home/${USER}/.cooking/jdk8-adoptium.tar.gz 'https://github.com/adoptium/temurin8-binaries/releases/download/jdk8u362-b09/OpenJDK8U-jdk_x64_linux_hotspot_8u362b09.tar.gz'
 	mkdir -p /home/${USER}/kits/dev/jdks/jdk8-adoptium
 	tar -xzf /home/${USER}/.cooking/jdk8-adoptium.tar.gz -C /home/${USER}/kits/dev/jdks/jdk8-adoptium --strip-components=1
+
+	wget -O /home/${USER}/.cooking/jdk8-zulu.tar.gz 'https://cdn.azul.com/zulu/bin/zulu8.68.0.21-ca-jdk8.0.362-linux_x64.tar.gz'
+	mkdir -p /home/${USER}/kits/dev/jdks/jdk8-zulu
+	tar -xzf /home/${USER}/.cooking/jdk8-zulu.tar.gz -C /home/${USER}/kits/dev/jdks/jdk8-zulu --strip-components=1
 
 	log SUCC "JDKs were added."
 }
