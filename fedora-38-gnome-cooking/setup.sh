@@ -12,7 +12,6 @@ log() {
 	if [ ! -z $3 ]; then exit $3; fi
 }
 
-
 function step1() {
 	log INFO "Atempting to update system..."
 	sudo dnf update -y || log ERROR 'Could not update...' 1
