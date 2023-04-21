@@ -22,13 +22,6 @@ function step1() {
 	reboot
 }
 
-function set_nvm() {
-	log INFO "Installing nvm ..."
-	wget -O /home/${USER}/.cooking/nvm-install.sh https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.3/install.sh
-	bash /home/${USER}/.cooking/nvm-install.sh
-	log SUCC "Installed nvm. After reboot we shall set a default NodeJS."
-}
-
 function set_rtw89() {
 	log INFO "Installing realtek drivers for wireless."
 	sudo dnf -y install kernel-headers kernel-devel git
@@ -57,7 +50,6 @@ function set_disable_wayland() {
 }
 
 function step2() {
-	set_nvm
 	set_rtw89
 	set_hostmane
 	set_disable_wayland
@@ -114,6 +106,13 @@ function set_scripts() {
 	/home/${USER}/kits/dev/scripts/set-jdk 17 adoptium
 	/home/${USER}/kits/dev/scripts/set-mvn 3.8
 	log SUCC "Installed scripts and used them to set OpenJDK 17 Adoptium with Maven 3.8."
+}
+
+function set_nvm() {
+	log INFO "Installing nvm ..."
+	wget -O /home/${USER}/.cooking/nvm-install.sh https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.3/install.sh
+	bash /home/${USER}/.cooking/nvm-install.sh
+	log SUCC "Installed nvm. After reboot we shall set a default NodeJS."
 }
 
 function set_kitty_config() {
@@ -197,20 +196,22 @@ function step3() {
 	log INFO "Installing other flatpak software..."
 	flatpak install -y flathub \
 		com.github.tchx84.Flatseal \
-		org.mozilla.Thunderbird \
-		com.discordapp.Discord \
+		com.vscodium.codium \
+		org.eclipse.Java \
+		com.jetbrains.IntelliJ-IDEA-Community \
 		io.dbeaver.DBeaverCommunity \
-		org.eclipse.Java md.obsidian.Obsidian \
 		com.anydesk.Anydesk \
 		org.libreoffice.LibreOffice \
-		com.vscodium.codium \
-		com.jetbrains.IntelliJ-IDEA-Community \
+		org.mozilla.Thunderbird \
+		com.discordapp.Discord \
+		md.obsidian.Obsidian \
 		|| log ERROR 'Could not install flatpak software...' 1
 	log SUCC "Installed flatpak packages via Flathub."
 
 	set_jdks
 	set_mvns
 	set_scripts
+	set_nvm
 	set_terminal
 	set_bashrc
 
