@@ -1,7 +1,7 @@
 # For KDE Plasma - Spin Release
 
-Run 3 times for Gnome version:
+Run 3 times for Xfce version:
 
 ```bash
-bash <(curl -sS https://raw.githubusercontent.com/BrotherPatrix/my-fedora-cooking/main/fedora-38-kde-cooking/setup.sh)
+bash <(curl -sS https://raw.githubusercontent.com/BrotherPatrix/my-fedora-cooking/main/fedora-38-xfce-cooking/setup.sh)
 ```
