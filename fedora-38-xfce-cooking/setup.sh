@@ -193,6 +193,7 @@ function step3() {
 	log SUCC "Added Fusion repositories."
 	
 	log INFO "Atempting to add flatpak flathub repository..."
+	sudo dnf -y install flatpak # xfce4 spin does not come with flatpak installed...
 	flatpak remote-add --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo \
 		|| log ERROR 'Could not set flathub repository...' 1
 	log SUCC "Added flatpak Flathub repository."
