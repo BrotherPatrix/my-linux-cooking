@@ -30,7 +30,7 @@ function set_remote() {
 	log SUCC "Updated OpenSSH access."
 
 	log INFO "Installing xrdp."
-	sudo dnf -y xrdp
+	sudo dnf -y install xrdp
 	sudo systemctl enable --now xrdp
 	sudo systemctl start xrdp
 	sudo firewall-cmd --permanent --zone=public --add-service=rdp
