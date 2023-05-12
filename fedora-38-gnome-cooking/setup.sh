@@ -205,10 +205,11 @@ function step3() {
 	log SUCC "Added flatpak Flathub repository."
 	
 	log INFO "Installing other dnf software..."
-	sudo dnf -y install dnf-plugins-core
-	sudo dnf config-manager --add-repo https://brave-browser-rpm-release.s3.brave.com/brave-browser.repo
-	sudo rpm --import https://brave-browser-rpm-release.s3.brave.com/brave-core.asc
-	sudo dnf -y install vim podman curl wget kitty git git-lfs neofetch exa brave-browser \
+	#sudo dnf -y install dnf-plugins-core
+	#sudo dnf config-manager --add-repo https://brave-browser-rpm-release.s3.brave.com/brave-browser.repo
+	#sudo rpm --import https://brave-browser-rpm-release.s3.brave.com/brave-core.asc
+	#sudo dnf install brave-browser
+	sudo dnf -y install vim podman curl wget kitty git git-lfs neofetch exa \
 		|| log ERROR 'Could not install other dnf software...' 1
 	log SUCC "Installed dnf packages."
 	log INFO "Initializing git lfs..."
