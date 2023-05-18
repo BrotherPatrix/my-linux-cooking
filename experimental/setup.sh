@@ -76,8 +76,7 @@ function install_dnf_packages() {
 	sudo dnf -y install dnf-plugins-core
 	sudo dnf config-manager --add-repo https://brave-browser-rpm-release.s3.brave.com/brave-browser.repo
 	sudo rpm --import https://brave-browser-rpm-release.s3.brave.com/brave-core.asc
-	sudo dnf install brave-browser
-	sudo dnf -y install vim podman curl wget kitty git git-lfs neofetch exa flatpak \
+	sudo dnf -y install vim podman curl wget kitty git git-lfs neofetch exa flatpak brave-browser \
 		|| log ERROR 'Could not install other dnf software...' 1
 	log SUCC "Installed dnf packages."
 	log INFO "Initializing git lfs..."
