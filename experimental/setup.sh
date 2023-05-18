@@ -42,16 +42,9 @@ function set_hostmane() {
 	log SUCC "Updated hostname. This hostname will be updated after reboot"
 }
 
-function set_disable_wayland() {
-	log INFO "Disabling Wayland ..."
-	sudo sed -i 's/#WaylandEnable/WaylandEnable/g' /etc/gdm/custom.conf || log ERROR 'Could not disable Wayland...' 1
-	log SUCC "Disabled Wayland. An x11 session will start after reboot"
-}
-
 function step2() {
 	install_rtw89
 	set_hostmane
-	set_disable_wayland
 
 	log SUCC "Updated system! Setting step 3! Restarting in 10s ..."
 	printf "3" > /home/${USER}/.cooking/.step
