@@ -21,7 +21,7 @@ function step1() {
 	reboot
 }
 
-function set_rtw89() {
+function install_rtw89() {
 	log INFO "Installing realtek drivers for wireless."
 	sudo dnf -y install kernel-headers kernel-devel git
 	sudo dnf -y group install "C Development Tools and Libraries"
@@ -43,7 +43,7 @@ function set_hostmane() {
 }
 
 function step2() {
-	set_rtw89
+	install_rtw89
 	set_hostmane
 
 	log SUCC "Updated system! Setting step 3! Restarting in 10s ..."
@@ -52,7 +52,53 @@ function step2() {
 	reboot
 }
 
-function set_jdks() {
+function install_dnf_packages() {
+	log INFO "Removing software..."
+	sudo dnf -y remove java-*
+	sudo dnf -y remove thunderbird
+	log SUCC "Removed unwanted packages."
+
+	log INFO "Atempting to add Fusion repositories..."
+	sudo dnf install -y https://download1.rpmfusion.org/free/fedora/rpmfusion-free-release-$(rpm -E %fedora).noarch.rpm \
+		|| log ERROR 'Could not set Fusion Free...' 1
+	sudo dnf install -y https://download1.rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-release-$(rpm -E %fedora).noarch.rpm \
+		|| log ERROR 'Could not set Fusion Non-Free...' 1
+	log SUCC "Added Fusion repositories."
+	
+	log INFO "Installing other dnf software..."
+	sudo dnf -y install dnf-plugins-core
+	sudo dnf config-manager --add-repo https://brave-browser-rpm-release.s3.brave.com/brave-browser.repo
+	sudo rpm --import https://brave-browser-rpm-release.s3.brave.com/brave-core.asc
+	sudo dnf -y install vim podman curl wget kitty git git-lfs neofetch exa flatpak brave-browser \
+		|| log ERROR 'Could not install other dnf software...' 1
+	log SUCC "Installed dnf packages."
+	log INFO "Initializing git lfs..."
+	git lfs install
+	log SUCC "Initialized git lfs."
+}
+
+function install_flatpaks() {
+	log INFO "Atempting to add flatpak flathub repository..."
+	flatpak remote-add --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo \
+		|| log ERROR 'Could not set flathub repository...' 1
+	log SUCC "Added flatpak Flathub repository."
+	log INFO "Installing other flatpak software..."
+	flatpak install -y flathub \
+		com.github.tchx84.Flatseal \
+		com.vscodium.codium \
+		org.eclipse.Java \
+		com.jetbrains.IntelliJ-IDEA-Community \
+		io.dbeaver.DBeaverCommunity \
+		com.anydesk.Anydesk \
+		org.libreoffice.LibreOffice \
+		org.mozilla.Thunderbird \
+		com.discordapp.Discord \
+		md.obsidian.Obsidian \
+		|| log ERROR 'Could not install flatpak software...' 1
+	log SUCC "Installed flatpak packages via Flathub."
+}
+
+function install_java_versions() {
 	log INFO "Setting up JDKs ..."
 
 	## Java 17
@@ -93,7 +139,7 @@ function set_jdks() {
 	log SUCC "JDKs were added."
 }
 
-function set_mvns() {
+function install_maven_versions() {
 	log INFO "Setting up MVNs ..."
 
 	wget -O /home/${USER}/.cooking/mvn-3.6.tar.gz https://dlcdn.apache.org/maven/maven-3/3.6.3/binaries/apache-maven-3.6.3-bin.tar.gz
@@ -111,7 +157,7 @@ function set_mvns() {
 	log SUCC "MVNs were added."
 }
 
-function set_scripts() {
+function install_scripts() {
 	log INFO "Installing JDKs and MVNs util scripts..."
 	mkdir -p /home/${USER}/kits/dev/scripts
 	printf '#!/usr/bin/env bash\nln -snf /home/${USER}/kits/dev/jdks/jdk${1}-${2}/ /home/${USER}/kits/dev/jdk' > /home/${USER}/kits/dev/scripts/set-jdk || log ERROR 'Could not create set-jdk bash script' 1
@@ -123,7 +169,7 @@ function set_scripts() {
 	log SUCC "Installed scripts and used them to set OpenJDK 17 Adoptium with Maven 3.8."
 }
 
-function set_nvm() {
+function install_nvm() {
 	log INFO "Installing nvm ..."
 	wget -O /home/${USER}/.cooking/nvm-install.sh https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.3/install.sh
 	bash /home/${USER}/.cooking/nvm-install.sh
@@ -141,7 +187,7 @@ background_opacity 0.8
 EOF
 }
 
-function set_terminal() {
+function install_terminal() {
 	log INFO "Installing and configuring starship..."
 	wget -O /home/${USER}/.cooking/starship-install.sh https://starship.rs/install.sh
 	sh /home/${USER}/.cooking/starship-install.sh -V -y || log ERROR 'Could not install starship.' 1
@@ -151,7 +197,7 @@ function set_terminal() {
 	log SUCC "Installed starship and configured kitty terminal."
 }
 
-function set_bashrc() {
+function customize_bashrc() {
 cat >> /home/${USER}/.bashrc <<'EOF'
 export JAVA_HOME="/home/${USER}/kits/dev/jdk"
 export M2_HOME="/home/${USER}/kits/dev/mvn"
@@ -179,59 +225,9 @@ neofetch
 EOF
 }
 
-function step3() {
-	log INFO "Removing software..."
-	sudo dnf -y remove java-*
-	sudo dnf -y remove thunderbird
-	log SUCC "Removed unwanted packages."
-
-	log INFO "Atempting to add Fusion repositories..."
-	sudo dnf install -y https://download1.rpmfusion.org/free/fedora/rpmfusion-free-release-$(rpm -E %fedora).noarch.rpm \
-		|| log ERROR 'Could not set Fusion Free...' 1
-	sudo dnf install -y https://download1.rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-release-$(rpm -E %fedora).noarch.rpm \
-		|| log ERROR 'Could not set Fusion Non-Free...' 1
-	log SUCC "Added Fusion repositories."
-	
-	log INFO "Atempting to add flatpak flathub repository..."
-	flatpak remote-add --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo \
-		|| log ERROR 'Could not set flathub repository...' 1
-	log SUCC "Added flatpak Flathub repository."
-	
-	log INFO "Installing other dnf software..."
-	sudo dnf -y install dnf-plugins-core
-	sudo dnf config-manager --add-repo https://brave-browser-rpm-release.s3.brave.com/brave-browser.repo
-	sudo rpm --import https://brave-browser-rpm-release.s3.brave.com/brave-core.asc
-	sudo dnf -y install vim podman curl wget kitty git git-lfs neofetch exa brave-browser \
-		|| log ERROR 'Could not install other dnf software...' 1
-	log SUCC "Installed dnf packages."
-	log INFO "Initializing git lfs..."
-	git lfs install
-	log SUCC "Initialized git lfs."
-
-	log INFO "Installing other flatpak software..."
-	flatpak install -y flathub \
-		com.github.tchx84.Flatseal \
-		com.vscodium.codium \
-		org.eclipse.Java \
-		com.jetbrains.IntelliJ-IDEA-Community \
-		io.dbeaver.DBeaverCommunity \
-		com.anydesk.Anydesk \
-		org.libreoffice.LibreOffice \
-		org.mozilla.Thunderbird \
-		com.discordapp.Discord \
-		md.obsidian.Obsidian \
-		|| log ERROR 'Could not install flatpak software...' 1
-	log SUCC "Installed flatpak packages via Flathub."
-
-	set_jdks
-	set_mvns
-	set_scripts
-	set_nvm
-	set_terminal
-	set_bashrc
-
+function install_font() {
 	log INFO "Installing font hack-nerd..."
-	wget -O hack-nerd.zip https://github.com/ryanoasis/nerd-fonts/releases/download/v2.3.3/Hack.zip
+	wget -O hack-nerd.zip https://github.com/ryanoasis/nerd-fonts/releases/download/v3.0.1/Hack.zip
 	unzip hack-nerd.zip
 	sudo mkdir -p /usr/local/share/fonts/hack-nerd
 	sudo mv *.ttf /usr/local/share/fonts/hack-nerd/
@@ -240,6 +236,18 @@ function step3() {
 	sudo restorecon -vFr /usr/local/share/fonts/hack-nerd
 	sudo fc-cache -v
 	log SUCC "Installed font hack-nerd."
+}
+
+function step3() {
+	install_dnf_packages
+	install_flatpaks
+	install_java_versions
+	install_maven_versions
+	install_scripts
+	install_nvm
+	install_terminal
+	customize_bashrc
+	install_font
 
 	log INFO "Cleaning up..."
 	rm -rf /home/${USER}/.cooking/
