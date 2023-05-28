@@ -43,7 +43,7 @@ function set_hostmane() {
 }
 
 function step2() {
-	install_rtw89
+	# install_rtw89
 	set_hostmane
 
 	log SUCC "Updated system! Setting step 3! Restarting in 10s ..."
