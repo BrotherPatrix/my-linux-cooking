@@ -216,7 +216,6 @@ function step3() {
 		org.eclipse.Java \
 		com.jetbrains.IntelliJ-IDEA-Community \
 		io.dbeaver.DBeaverCommunity \
-		com.anydesk.Anydesk \
 		org.libreoffice.LibreOffice \
 		org.mozilla.Thunderbird \
 		com.discordapp.Discord \
