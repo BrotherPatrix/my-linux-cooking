@@ -153,7 +153,7 @@ function install_maven_versions() {
 	mkdir -p /home/${USER}/kits/dev/mavens/mvn-3.8
 	tar -xzf /home/${USER}/.cooking/mvn-3.8.tar.gz -C /home/${USER}/kits/dev/mavens/mvn-3.8 --strip-components=1
 
-	wget -O /home/${USER}/.cooking/mvn-3.9.tar.gz https://dlcdn.apache.org/maven/maven-3/3.9.3/binaries/apache-maven-3.9.3-bin.tar.gz
+	wget -O /home/${USER}/.cooking/mvn-3.9.tar.gz https://dlcdn.apache.org/maven/maven-3/3.9.4/binaries/apache-maven-3.9.4-bin.tar.gz
 	mkdir -p /home/${USER}/kits/dev/mavens/mvn-3.9
 	tar -xzf /home/${USER}/.cooking/mvn-3.9.tar.gz -C /home/${USER}/kits/dev/mavens/mvn-3.9 --strip-components=1
 
