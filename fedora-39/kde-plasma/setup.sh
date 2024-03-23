@@ -322,7 +322,7 @@ echo "SETUVAR fish_user_paths:/home/${USER}/kits/dev/scripts\x1e/home/${USER}/ki
 
 function install_font() {
 	log INFO "Installing font hack-nerd..."
-	cd ${USER}/.cooking/
+	cd /home/${USER}/.cooking/
 	wget -O hack-nerd.zip https://github.com/ryanoasis/nerd-fonts/releases/download/v3.1.1/Hack.zip
 	unzip hack-nerd.zip
 	sudo mkdir -p /usr/local/share/fonts/hack-nerd
@@ -331,6 +331,7 @@ function install_font() {
 	sudo chmod 644 /usr/local/share/fonts/hack-nerd/*
 	sudo restorecon -vFr /usr/local/share/fonts/hack-nerd
 	sudo fc-cache -v
+	cd -
 	log SUCC "Installed font hack-nerd."
 }
 
