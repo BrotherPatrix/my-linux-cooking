@@ -72,6 +72,7 @@ function install_flatpaks() {
 		io.dbeaver.DBeaverCommunity \
 		com.anydesk.Anydesk \
 		org.libreoffice.LibreOffice \
+		io.podman_desktop.PodmanDesktop \
 		org.mozilla.Thunderbird \
 		com.discordapp.Discord \
 		md.obsidian.Obsidian \
@@ -330,6 +331,10 @@ function install_font() {
 	log SUCC "Installed font hack-nerd."
 }
 
+function install_containers() {
+	podman run -d -p 5432:5432 -e POSTGRES_PASSWORD=postgres --name=dev-postgres docker.io/library/postgres
+}
+
 function step3() {
 	install_dnf_packages
 	install_flatpaks
@@ -342,6 +347,8 @@ function step3() {
 	customize_bashrc
 	customize_fish
 	install_font
+
+	install_containers
 
 	log INFO "Cleaning up..."
 	rm -rf /home/${USER}/.cooking/
