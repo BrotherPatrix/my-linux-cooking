@@ -52,7 +52,7 @@ function install_dnf_packages() {
 	log SUCC "Added Fusion repositories."
 	
 	log INFO "Installing other dnf software..."
-	sudo dnf -y install dnf-plugins-core vim podman curl wget kitty git git-lfs neofetch eza flatpak chromium zoxide fzf postgresql\
+	sudo dnf -y install dnf-plugins-core vim podman curl wget kitty git git-lfs neofetch eza flatpak zoxide fzf postgresql\
 		|| log ERROR 'Could not install other dnf software...' 1
 	log SUCC "Installed dnf packages."
 	log INFO "Initializing git lfs..."
@@ -76,6 +76,7 @@ function install_flatpaks() {
 		org.mozilla.Thunderbird \
 		com.discordapp.Discord \
 		md.obsidian.Obsidian \
+		org.chromium.Chromium \
 		|| log ERROR 'Could not install flatpak software...' 1
 	log SUCC "Installed flatpak packages via Flathub."
 }
@@ -182,6 +183,7 @@ function install_ides {
 	tar -xzvf eclipse.tar.gz -C eclipse --strip-components=1
 	mkdir idea
 	tar -xzvf idea.tar.gz -C idea --strip-components=1
+	rm -rf *.tar.gz
 	cd -
 
 	mkdir -p /home/${USER}/.local/share/applications/
@@ -320,7 +322,8 @@ echo "SETUVAR fish_user_paths:/home/${USER}/kits/dev/scripts\x1e/home/${USER}/ki
 
 function install_font() {
 	log INFO "Installing font hack-nerd..."
-	wget -O hack-nerd.zip https://github.com/ryanoasis/nerd-fonts/releases/download/v3.0.1/Hack.zip
+	cd ${USER}/.cooking/
+	wget -O hack-nerd.zip https://github.com/ryanoasis/nerd-fonts/releases/download/v3.1.1/Hack.zip
 	unzip hack-nerd.zip
 	sudo mkdir -p /usr/local/share/fonts/hack-nerd
 	sudo mv *.ttf /usr/local/share/fonts/hack-nerd/
