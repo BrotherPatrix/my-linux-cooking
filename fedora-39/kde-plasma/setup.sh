@@ -52,7 +52,7 @@ function install_dnf_packages() {
 	log SUCC "Added Fusion repositories."
 	
 	log INFO "Installing other dnf software..."
-	sudo dnf -y install dnf-plugins-core vim podman curl wget kitty git git-lfs neofetch eza flatpak chromium zoxide fzf\
+	sudo dnf -y install dnf-plugins-core vim podman curl wget kitty git git-lfs neofetch eza flatpak chromium zoxide fzf postgresql\
 		|| log ERROR 'Could not install other dnf software...' 1
 	log SUCC "Installed dnf packages."
 	log INFO "Initializing git lfs..."
@@ -332,7 +332,32 @@ function install_font() {
 }
 
 function install_containers() {
-	podman run -d -p 5432:5432 -e POSTGRES_PASSWORD=postgres --name=dev-postgres docker.io/library/postgres
+log INFO "Installing postgresql as a development container..."
+podman pull	docker.io/library/postgres:15-bookworm || log ERROR 'Could not pull postgresql container.' 1
+mkdir -p ${HOME}/volumes/dev-postgres/ || log ERROR 'Could not create volume folder.' 1
+mkdir -p ${HOME}/.config/containers/systemd/ || log ERROR 'Could not create user systemd folder.' 1
+cat >> /home/${USER}/.config/containers/systemd/dev-postgres.container <<'EOF'
+[Unit]
+Description=PostgreSQL Container for Development
+After=local-fs.target network-online.target
+Wants=network-online.target
+
+[Container]
+Image=docker.io/library/postgres:15-bookworm
+AutoUpdate=registry
+PublishPort=5432:5432
+Volume=%h/volumes/dev-postgres:/var/lib/postgresql/data:Z
+Environment=POSTGRES_PASSWORD=postgres
+
+[Service]
+Restart=always
+
+[Install]
+WantedBy=default.target
+EOF
+systemctl --user daemon-reload || log ERROR 'Could not daemon-reload.' 1
+systemctl --user start dev-postgres || log ERROR 'Could not start postgresql container as a service.' 1
+log SUCC "Installed postgresql as a development container."
 }
 
 function step3() {
@@ -347,7 +372,6 @@ function step3() {
 	customize_bashrc
 	customize_fish
 	install_font
-
 	install_containers
 
 	log INFO "Cleaning up..."
