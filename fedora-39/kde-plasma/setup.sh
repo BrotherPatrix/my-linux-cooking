@@ -223,17 +223,14 @@ alias ll='eza -laB --sort name --time-style long-iso --git --icons --color=alway
 alias lt='eza -aT --color=always --group-directories-first --icons'                 # tree listing
 alias l.="eza -a | egrep '^\.'"                                                     # show only dotfiles
 
-eval "$(starship init bash)"
 eval "$(zoxide init --cmd cd bash)"
+eval "$(mcfly init bash)"
 
-neofetch
 EOF
 }
 
 function customize_fish() {
 cat >> /home/${USER}/.config/fish/config.fish <<'EOF'
-starship init fish | source
-
 # Common use
 alias upd="sudo dnf update && flatpak update"
 alias update="sudo dnf update && flatpak update"
@@ -257,7 +254,9 @@ alias l.="eza -a | egrep '^\.'"                                                 
 
 alias web-ip="curl ifconfig.me"
 
+starship init fish | source
 zoxide init --cmd cd fish | source
+mcfly init fish | source
 
 neofetch
 EOF
@@ -265,6 +264,7 @@ EOF
 cat >> /home/${USER}/.config/fish/fish_variables <<'EOF'
 SETUVAR --export JAVA_HOME:/home/${USER}/kits/dev/jdk
 SETUVAR --export M2_HOME:/home/${USER}/kits/dev/mvn
+SETUVAR fish_greeting:
 EOF
 }
 
