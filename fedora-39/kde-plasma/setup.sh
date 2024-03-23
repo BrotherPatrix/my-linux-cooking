@@ -196,10 +196,10 @@ function install_terminal() {
 	log SUCC "Installed mcfly."
 
 	log INFO "Atempting to install fish shell..."
-	sudo dnf install fish
+	sudo dnf install fish -y
 	sudo chsh -s $(which fish) ${USER}
-	curl -sL https://raw.githubusercontent.com/jorgebucaran/fisher/main/functions/fisher.fish | source && fisher install jorgebucaran/fisher
-	fisher install jorgebucaran/nvm.fish
+	fish -c 'curl -sL https://raw.githubusercontent.com/jorgebucaran/fisher/main/functions/fisher.fish | source && fisher install jorgebucaran/fisher'
+	fish -c 'fisher install jorgebucaran/nvm.fish'
 	log SUCC "Added fish shell as default..."
 
 }
