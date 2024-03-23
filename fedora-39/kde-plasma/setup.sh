@@ -182,6 +182,9 @@ function install_ides {
 	mkdir idea
 	tar -xzvf idea.tar.gz -C idea --strip-components=1
 	cd -
+
+	mkdir -p /home/${USER}/.local/share/applications/
+
 	echo "[Desktop Entry]" >> /home/${USER}/.local/share/applications/eclipse.desktop
 	echo "Comment=Eclipse IDE installed by cooking script." >> /home/${USER}/.local/share/applications/eclipse.desktop
 	echo "Exec=/home/${USER}/kits/dev/eclipse/eclipse" >> /home/${USER}/.local/share/applications/eclipse.desktop
