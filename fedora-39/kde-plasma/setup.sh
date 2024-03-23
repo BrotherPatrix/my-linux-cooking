@@ -154,7 +154,7 @@ function install_scripts() {
 	chmod +x /home/${USER}/kits/dev/scripts/set-jdk || log ERROR 'Could not make set-jdk bash script executable!' 1
 	printf '#!/usr/bin/env bash\nln -snf /home/${USER}/kits/dev/mavens/mvn-${1}/ /home/${USER}/kits/dev/mvn' > /home/${USER}/kits/dev/scripts/set-mvn || log ERROR 'Could not create set-mvn bash script' 1
 	chmod +x /home/${USER}/kits/dev/scripts/set-mvn || log ERROR 'Could not make set-mvn bash script executable!' 1
-	/home/${USER}/kits/dev/scripts/set-jdk 21 adoptium
+	/home/${USER}/kits/dev/scripts/set-jdk 21 zulu
 	/home/${USER}/kits/dev/scripts/set-mvn 3.9
 	log SUCC "Installed scripts and used them to set OpenJDK 17 Adoptium with Maven 3.8."
 }
