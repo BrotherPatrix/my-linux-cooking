@@ -145,7 +145,7 @@ function install_maven_versions() {
 	mkdir -p /home/${USER}/kits/dev/mavens/mvn-3.8
 	tar -xzf /home/${USER}/.cooking/mvn-3.8.tar.gz -C /home/${USER}/kits/dev/mavens/mvn-3.8 --strip-components=1
 
-	wget -O /home/${USER}/.cooking/mvn-3.9.tar.gz https://dlcdn.apache.org/maven/maven-3/3.9.2/binaries/apache-maven-3.9.2-bin.tar.gz
+	wget -O /home/${USER}/.cooking/mvn-3.9.tar.gz https://dlcdn.apache.org/maven/maven-3/3.9.6/binaries/apache-maven-3.9.6-bin.tar.gz
 	mkdir -p /home/${USER}/kits/dev/mavens/mvn-3.9
 	tar -xzf /home/${USER}/.cooking/mvn-3.9.tar.gz -C /home/${USER}/kits/dev/mavens/mvn-3.9 --strip-components=1
 
@@ -224,6 +224,7 @@ alias lt='eza -aT --color=always --group-directories-first --icons'             
 alias l.="eza -a | egrep '^\.'"                                                     # show only dotfiles
 
 eval "$(starship init bash)"
+eval "$(zoxide init --cmd cd bash)"
 
 neofetch
 EOF
@@ -255,6 +256,8 @@ alias lt='eza -aT --color=always --group-directories-first --icons'             
 alias l.="eza -a | egrep '^\.'"                                                     # show only dotfiles
 
 alias web-ip="curl ifconfig.me"
+
+zoxide init --cmd cd fish | source
 
 neofetch
 EOF
