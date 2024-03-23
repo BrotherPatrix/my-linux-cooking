@@ -261,11 +261,10 @@ mcfly init fish | source
 neofetch
 EOF
 
-cat >> /home/${USER}/.config/fish/fish_variables <<'EOF'
-SETUVAR --export JAVA_HOME:/home/${USER}/kits/dev/jdk
-SETUVAR --export M2_HOME:/home/${USER}/kits/dev/mvn
-SETUVAR fish_greeting:
-EOF
+echo "SETUVAR --export JAVA_HOME:/home/${USER}/kits/dev/jdk" >> /home/${USER}/.config/fish/fish_variables
+echo "SETUVAR --export M2_HOME:/home/${USER}/kits/dev/mvn" >> /home/${USER}/.config/fish/fish_variables
+echo "SETUVAR fish_greeting:" >> /home/${USER}/.config/fish/fish_variables
+echo "SETUVAR fish_user_paths:/home/${USER}/kits/dev/scripts\x1e/home/${USER}/kits/dev/mvn/bin\x1e/home/${USER}/kits/dev/jdk/bin" >> /home/${USER}/.config/fish/fish_variables
 }
 
 function install_font() {
