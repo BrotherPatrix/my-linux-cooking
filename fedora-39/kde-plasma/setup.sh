@@ -52,10 +52,7 @@ function install_dnf_packages() {
 	log SUCC "Added Fusion repositories."
 	
 	log INFO "Installing other dnf software..."
-	sudo dnf -y install dnf-plugins-core
-	sudo rpmkeys --import https://gitlab.com/paulcarroty/vscodium-deb-rpm-repo/-/raw/master/pub.gpg
-	printf "[gitlab.com_paulcarroty_vscodium_repo]\nname=download.vscodium.com\nbaseurl=https://download.vscodium.com/rpms/\nenabled=1\ngpgcheck=1\nrepo_gpgcheck=1\ngpgkey=https://gitlab.com/paulcarroty/vscodium-deb-rpm-repo/-/raw/master/pub.gpg\nmetadata_expire=1h" | sudo tee -a /etc/yum.repos.d/vscodium.repo
-	sudo dnf -y install vim podman curl wget kitty git git-lfs neofetch eza flatpak codium chromium zoxide fzf\
+	sudo dnf -y install dnf-plugins-core vim podman curl wget kitty git git-lfs neofetch eza flatpak chromium zoxide fzf\
 		|| log ERROR 'Could not install other dnf software...' 1
 	log SUCC "Installed dnf packages."
 	log INFO "Initializing git lfs..."
@@ -72,8 +69,6 @@ function install_flatpaks() {
 	log INFO "Installing other flatpak software..."
 	flatpak install -y flathub \
 		com.github.tchx84.Flatseal \
-		org.eclipse.Java \
-		com.jetbrains.IntelliJ-IDEA-Community \
 		io.dbeaver.DBeaverCommunity \
 		com.anydesk.Anydesk \
 		org.libreoffice.LibreOffice \
@@ -159,8 +154,8 @@ function install_scripts() {
 	chmod +x /home/${USER}/kits/dev/scripts/set-jdk || log ERROR 'Could not make set-jdk bash script executable!' 1
 	printf '#!/usr/bin/env bash\nln -snf /home/${USER}/kits/dev/mavens/mvn-${1}/ /home/${USER}/kits/dev/mvn' > /home/${USER}/kits/dev/scripts/set-mvn || log ERROR 'Could not create set-mvn bash script' 1
 	chmod +x /home/${USER}/kits/dev/scripts/set-mvn || log ERROR 'Could not make set-mvn bash script executable!' 1
-	/home/${USER}/kits/dev/scripts/set-jdk 17 adoptium
-	/home/${USER}/kits/dev/scripts/set-mvn 3.8
+	/home/${USER}/kits/dev/scripts/set-jdk 21 adoptium
+	/home/${USER}/kits/dev/scripts/set-mvn 3.9
 	log SUCC "Installed scripts and used them to set OpenJDK 17 Adoptium with Maven 3.8."
 }
 
@@ -169,6 +164,52 @@ function install_nvm() {
 	wget -O /home/${USER}/.cooking/nvm-install.sh https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.3/install.sh
 	bash /home/${USER}/.cooking/nvm-install.sh
 	log SUCC "Installed nvm. After reboot we shall set a default NodeJS."
+}
+
+function install_ides {
+	log INFO "Installing VSCodium for frontend development..."
+	sudo rpmkeys --import https://gitlab.com/paulcarroty/vscodium-deb-rpm-repo/-/raw/master/pub.gpg
+	printf "[gitlab.com_paulcarroty_vscodium_repo]\nname=download.vscodium.com\nbaseurl=https://download.vscodium.com/rpms/\nenabled=1\ngpgcheck=1\nrepo_gpgcheck=1\ngpgkey=https://gitlab.com/paulcarroty/vscodium-deb-rpm-repo/-/raw/master/pub.gpg\nmetadata_expire=1h" | sudo tee -a /etc/yum.repos.d/vscodium.repo
+	sudo dnf -y install codium || log ERROR 'Could not install other dnf software...' 1
+	log SUCC "Installed VSCodium."
+
+	log INFO "Installing Eclipse and Idea for Java Development..."
+	wget -O /home/${USER}/kits/dev/eclipse.tar.gz https://ftp.fau.de/eclipse/technology/epp/downloads/release/2024-03/R/eclipse-jee-2024-03-R-linux-gtk-x86_64.tar.gz
+	wget -O /home/${USER}/kits/dev/idea.tar.gz https://download.jetbrains.com/idea/ideaIC-2023.3.6.tar.gz
+	cd /home/${USER}/kits/dev/
+	mkdir eclipse
+	tar -xzvf eclipse.tar.gz -C eclipse --strip-components=1
+	mkdir idea
+	tar -xzvf idea.tar.gz -C idea --strip-components=1
+	cd -
+	echo "[Desktop Entry]" >> /home/${USER}/.local/share/applications/eclipse.desktop
+	echo "Comment=Eclipse IDE installed by cooking script." >> /home/${USER}/.local/share/applications/eclipse.desktop
+	echo "Exec=/home/${USER}/kits/dev/eclipse/eclipse" >> /home/${USER}/.local/share/applications/eclipse.desktop
+	echo "GenericName=Eclipse IDE for Enterprise Java and Web Developers" >> /home/${USER}/.local/share/applications/eclipse.desktop
+	echo "Icon=/home/${USER}/kits/dev/eclipse/icon.xpm" >> /home/${USER}/.local/share/applications/eclipse.desktop
+	echo "Name=Eclipse" >> /home/${USER}/.local/share/applications/eclipse.desktop
+	echo "NoDisplay=false" >> /home/${USER}/.local/share/applications/eclipse.desktop
+	echo "Path=" >> /home/${USER}/.local/share/applications/eclipse.desktop
+	echo "StartupNotify=true" >> /home/${USER}/.local/share/applications/eclipse.desktop
+	echo "Terminal=false" >> /home/${USER}/.local/share/applications/eclipse.desktop
+	echo "TerminalOptions=" >> /home/${USER}/.local/share/applications/eclipse.desktop
+	echo "Type=Application" >> /home/${USER}/.local/share/applications/eclipse.desktop
+
+	echo "[Desktop Entry]" >> /home/${USER}/.local/share/applications/idea.desktop
+	echo "Comment=IntelliJ IDEA installed by cooking script." >> /home/${USER}/.local/share/applications/idea.desktop
+	echo "Exec=/home/${USER}/kits/dev/idea/bin/idea.sh" >> /home/${USER}/.local/share/applications/idea.desktop
+	echo "GenericName=IntelliJ IDEA" >> /home/${USER}/.local/share/applications/idea.desktop
+	echo "Icon=/home/${USER}/kits/dev/idea/bin/idea.svg" >> /home/${USER}/.local/share/applications/idea.desktop
+	echo "Name=IntelliJ IDEA" >> /home/${USER}/.local/share/applications/idea.desktop
+	echo "NoDisplay=false" >> /home/${USER}/.local/share/applications/idea.desktop
+	echo "Path=" >> /home/${USER}/.local/share/applications/idea.desktop
+	echo "StartupNotify=true" >> /home/${USER}/.local/share/applications/idea.desktop
+	echo "Terminal=false" >> /home/${USER}/.local/share/applications/idea.desktop
+	echo "TerminalOptions=" >> /home/${USER}/.local/share/applications/idea.desktop
+	echo "Type=Application" >> /home/${USER}/.local/share/applications/idea.desktop
+
+	log SUCC "Installed Eclipse and Idea."
+
 }
 
 function set_kitty_config() {
@@ -212,6 +253,10 @@ export JDK_MVN_SCRIPTS="/home/${USER}/kits/dev/scripts/"
 export PATH="${JAVA_HOME}/bin:${M2_HOME}/bin:${JDK_MVN_SCRIPTS}:${PATH}"
 
 alias upd="sudo dnf update && flatpak update"
+alias update="sudo dnf update && flatpak update"
+
+alias grubup="sudo update-grub"
+
 alias ssh="TERM=xterm-color ssh"
 
 ## Useful aliases
@@ -236,6 +281,8 @@ alias upd="sudo dnf update && flatpak update"
 alias update="sudo dnf update && flatpak update"
 
 alias grubup="sudo update-grub"
+
+alias ssh="TERM=xterm-color ssh"
 
 alias ..='cd ..'
 alias ...='cd ../..'
@@ -287,6 +334,7 @@ function step3() {
 	install_maven_versions
 	install_scripts
 	install_nvm
+	install_ides
 	install_terminal
 	customize_bashrc
 	customize_fish
@@ -295,8 +343,8 @@ function step3() {
 	log INFO "Cleaning up..."
 	rm -rf /home/${USER}/.cooking/
 	log INFO "Everything is done! After a restart, run the following commands:"
-	log INFO '$ set-jdk 17 adoptium'
-	log INFO '$ set-mvn 3.8'
+	log INFO '$ set-jdk 21 zulu'
+	log INFO '$ set-mvn 3.9'
 	log INFO '$ nvm install 18'
 	log INFO "After this, JDK and NodeJS sould be ready to use. Besides 17 with adoptium, but there is also JDK 11 and 8 with zulu and graalvm variants."
 	log INFO "Full log available at /home/${USER}/cook.log"
