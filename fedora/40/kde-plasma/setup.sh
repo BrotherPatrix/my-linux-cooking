@@ -40,7 +40,12 @@ function step2() {
 
 function remove_dnf_packages() {
 	log INFO "Removing bloatware..."
-	sudo dnf remove -y 'kdeconnect-*' 'akonadi-*' 'kwallet*' kmail korganizer dragon elisa-player neochat
+	sudo dnf groupremove -y libreoffice \
+		|| log ERROR 'Could not remove libreoffice group...' 1
+	sudo dnf remove -y libreoffice* \
+		|| log ERROR 'Could not remove libreoffice remnants...' 1
+	sudo dnf remove -y 'kdeconnect-*' 'akonadi-*' 'kwallet*' kmail korganizer dragon elisa-player neochat \
+		|| log ERROR 'Could not remove other bloatware...' 1
 	log SUCC "Removed blaotware!"
 }
 
