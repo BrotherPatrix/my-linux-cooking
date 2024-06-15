@@ -81,56 +81,42 @@ function install_flatpaks() {
 	log SUCC "Installed flatpak packages via Flathub."
 }
 
+function install_nvm() {
+	log INFO "Installing nvm ..."
+	wget -O /home/${USER}/.cooking/nvm-install.sh https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.3/install.sh
+	bash /home/${USER}/.cooking/nvm-install.sh
+	log SUCC "Installed nvm."
+
+	log INFO "Installing Node 20 candidates."
+	bash -c 'source ~/.bashrc && nvm install 20'
+	log SUCC "Installed Node 20 candidates."
+}
+
+function install_sdkman() {
+	log INFO "Installing sdkman ..."
+	wget -O /home/${USER}/.cooking/sdkman-install.sh "https://get.sdkman.io"
+	bash /home/${USER}/.cooking/sdkman-install.sh
+	log SUCC "Installed sdkman. After reboot we shall set a default Java and Maven."
+}
+
 function install_java_versions() {
 	log INFO "Setting up JDKs ..."
 
-	## Java 21
-	wget -O /home/${USER}/.cooking/jdk21-adoptium.tar.gz 'https://github.com/adoptium/temurin21-binaries/releases/download/jdk-21.0.2%2B13/OpenJDK21U-jdk_x64_linux_hotspot_21.0.2_13.tar.gz'
-	mkdir -p /home/${USER}/kits/dev/jdks/jdk21-adoptium
-	tar -xzf /home/${USER}/.cooking/jdk21-adoptium.tar.gz -C /home/${USER}/kits/dev/jdks/jdk21-adoptium --strip-components=1
+	log INFO "Installing Java 8 candidates."
+	bash -c 'source ~/.bashrc && sdk install java 8.0.412-zulu'
+	log SUCC "Installed Java 8 candidates."
 
-	wget -O /home/${USER}/.cooking/jdk21-zulu.tar.gz 'https://cdn.azul.com/zulu/bin/zulu21.32.17-ca-jdk21.0.2-linux_x64.tar.gz'
-	mkdir -p /home/${USER}/kits/dev/jdks/jdk21-zulu
-	tar -xzf /home/${USER}/.cooking/jdk21-zulu.tar.gz -C /home/${USER}/kits/dev/jdks/jdk21-zulu --strip-components=1
+	log INFO "Installing Java 11 candidates."
+	bash -c 'source ~/.bashrc && sdk install java 11.0.23-zulu'
+	log SUCC "Installed Java 11 candidates."
 
-	wget -O /home/${USER}/.cooking/jdk21-graalvm.tar.gz 'https://github.com/graalvm/graalvm-ce-builds/releases/download/jdk-21.0.2/graalvm-community-jdk-21.0.2_linux-x64_bin.tar.gz'
-	mkdir -p /home/${USER}/kits/dev/jdks/jdk21-graalvm
-	tar -xzf /home/${USER}/.cooking/jdk21-graalvm.tar.gz -C /home/${USER}/kits/dev/jdks/jdk21-graalvm --strip-components=1
+	log INFO "Installing Java 17 candidates."
+	bash -c 'source ~/.bashrc && sdk install java 17.0.11-zulu && sdk install java 17.0.11-oracle'
+	log SUCC "Installed Java 17 candidates."
 
-	## Java 17
-	wget -O /home/${USER}/.cooking/jdk17-adoptium.tar.gz 'https://github.com/adoptium/temurin17-binaries/releases/download/jdk-17.0.10%2B7/OpenJDK17U-jdk_x64_linux_hotspot_17.0.10_7.tar.gz'
-	mkdir -p /home/${USER}/kits/dev/jdks/jdk17-adoptium
-	tar -xzf /home/${USER}/.cooking/jdk17-adoptium.tar.gz -C /home/${USER}/kits/dev/jdks/jdk17-adoptium --strip-components=1
-
-	wget -O /home/${USER}/.cooking/jdk17-zulu.tar.gz 'https://cdn.azul.com/zulu/bin/zulu17.48.15-ca-jdk17.0.10-linux_x64.tar.gz'
-	mkdir -p /home/${USER}/kits/dev/jdks/jdk17-zulu
-	tar -xzf /home/${USER}/.cooking/jdk17-zulu.tar.gz -C /home/${USER}/kits/dev/jdks/jdk17-zulu --strip-components=1
-
-	wget -O /home/${USER}/.cooking/jdk17-graalvm.tar.gz 'https://github.com/graalvm/graalvm-ce-builds/releases/download/jdk-17.0.9/graalvm-community-jdk-17.0.9_linux-x64_bin.tar.gz'
-	mkdir -p /home/${USER}/kits/dev/jdks/jdk17-graalvm
-	tar -xzf /home/${USER}/.cooking/jdk17-graalvm.tar.gz -C /home/${USER}/kits/dev/jdks/jdk17-graalvm --strip-components=1
-
-	## Java 11
-	wget -O /home/${USER}/.cooking/jdk11-adoptium.tar.gz 'https://github.com/adoptium/temurin11-binaries/releases/download/jdk-11.0.22%2B7/OpenJDK11U-jdk_x64_linux_hotspot_11.0.22_7.tar.gz'
-	mkdir -p /home/${USER}/kits/dev/jdks/jdk11-adoptium
-	tar -xzf /home/${USER}/.cooking/jdk11-adoptium.tar.gz -C /home/${USER}/kits/dev/jdks/jdk11-adoptium --strip-components=1
-
-	wget -O /home/${USER}/.cooking/jdk11-zulu.tar.gz 'https://cdn.azul.com/zulu/bin/zulu11.70.15-ca-jdk11.0.22-linux_x64.tar.gz'
-	mkdir -p /home/${USER}/kits/dev/jdks/jdk11-zulu
-	tar -xzf /home/${USER}/.cooking/jdk11-zulu.tar.gz -C /home/${USER}/kits/dev/jdks/jdk11-zulu --strip-components=1
-
-	wget -O /home/${USER}/.cooking/jdk11-graalvm.tar.gz 'https://github.com/graalvm/graalvm-ce-builds/releases/download/vm-22.3.3/graalvm-ce-java11-linux-amd64-22.3.3.tar.gz'
-	mkdir -p /home/${USER}/kits/dev/jdks/jdk11-graalvm
-	tar -xzf /home/${USER}/.cooking/jdk11-graalvm.tar.gz -C /home/${USER}/kits/dev/jdks/jdk11-graalvm --strip-components=1
-
-	## Java 8
-	wget -O /home/${USER}/.cooking/jdk8-adoptium.tar.gz 'https://github.com/adoptium/temurin8-binaries/releases/download/jdk8u402-b06/OpenJDK8U-jdk_x64_linux_hotspot_8u402b06.tar.gz'
-	mkdir -p /home/${USER}/kits/dev/jdks/jdk8-adoptium
-	tar -xzf /home/${USER}/.cooking/jdk8-adoptium.tar.gz -C /home/${USER}/kits/dev/jdks/jdk8-adoptium --strip-components=1
-
-	wget -O /home/${USER}/.cooking/jdk8-zulu.tar.gz 'https://cdn.azul.com/zulu/bin/zulu8.76.0.17-ca-jdk8.0.402-linux_x64.tar.gz'
-	mkdir -p /home/${USER}/kits/dev/jdks/jdk8-zulu
-	tar -xzf /home/${USER}/.cooking/jdk8-zulu.tar.gz -C /home/${USER}/kits/dev/jdks/jdk8-zulu --strip-components=1
+	log INFO "Installing Java 21 candidates."
+	bash -c 'source ~/.bashrc && sdk install java 21.0.3-zulu && sdk install java 21.0.3-oracle'
+	log SUCC "Installed Java 21 candidates."
 
 	log SUCC "JDKs were added."
 }
@@ -138,34 +124,15 @@ function install_java_versions() {
 function install_maven_versions() {
 	log INFO "Setting up MVNs ..."
 
-	wget -O /home/${USER}/.cooking/mvn-3.8.tar.gz https://dlcdn.apache.org/maven/maven-3/3.8.8/binaries/apache-maven-3.8.8-bin.tar.gz
-	mkdir -p /home/${USER}/kits/dev/mavens/mvn-3.8
-	tar -xzf /home/${USER}/.cooking/mvn-3.8.tar.gz -C /home/${USER}/kits/dev/mavens/mvn-3.8 --strip-components=1
+	log INFO "Installing Maven 3.8.8 candidates."
+	bash -c 'source ~/.bashrc && sdk install maven 3.8.8'
+	log SUCC "Installed Maven 3.8.8 candidates."
 
-	wget -O /home/${USER}/.cooking/mvn-3.9.tar.gz https://dlcdn.apache.org/maven/maven-3/3.9.6/binaries/apache-maven-3.9.6-bin.tar.gz
-	mkdir -p /home/${USER}/kits/dev/mavens/mvn-3.9
-	tar -xzf /home/${USER}/.cooking/mvn-3.9.tar.gz -C /home/${USER}/kits/dev/mavens/mvn-3.9 --strip-components=1
+	log INFO "Installing Maven 3.9.7 candidates."
+	bash -c 'source ~/.bashrc && sdk install maven 3.9.7'
+	log SUCC "Installed Maven 3.9.7 candidates."
 
 	log SUCC "MVNs were added."
-}
-
-function install_scripts() {
-	log INFO "Installing JDKs and MVNs util scripts..."
-	mkdir -p /home/${USER}/kits/dev/scripts
-	printf '#!/usr/bin/env bash\nln -snf /home/${USER}/kits/dev/jdks/jdk${1}-${2}/ /home/${USER}/kits/dev/jdk' > /home/${USER}/kits/dev/scripts/set-jdk || log ERROR 'Could not create set-jdk bash script' 1
-	chmod +x /home/${USER}/kits/dev/scripts/set-jdk || log ERROR 'Could not make set-jdk bash script executable!' 1
-	printf '#!/usr/bin/env bash\nln -snf /home/${USER}/kits/dev/mavens/mvn-${1}/ /home/${USER}/kits/dev/mvn' > /home/${USER}/kits/dev/scripts/set-mvn || log ERROR 'Could not create set-mvn bash script' 1
-	chmod +x /home/${USER}/kits/dev/scripts/set-mvn || log ERROR 'Could not make set-mvn bash script executable!' 1
-	/home/${USER}/kits/dev/scripts/set-jdk 21 zulu
-	/home/${USER}/kits/dev/scripts/set-mvn 3.9
-	log SUCC "Installed scripts and used them to set OpenJDK 17 Adoptium with Maven 3.8."
-}
-
-function install_nvm() {
-	log INFO "Installing nvm ..."
-	wget -O /home/${USER}/.cooking/nvm-install.sh https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.7/install.sh
-	bash /home/${USER}/.cooking/nvm-install.sh
-	log SUCC "Installed nvm. After reboot we shall set a default NodeJS."
 }
 
 function install_ides {
@@ -176,8 +143,8 @@ function install_ides {
 	log SUCC "Installed VSCodium."
 
 	log INFO "Installing Eclipse and Idea for Java Development..."
-	wget -O /home/${USER}/kits/dev/eclipse.tar.gz https://ftp.fau.de/eclipse/technology/epp/downloads/release/2024-03/R/eclipse-jee-2024-03-R-linux-gtk-x86_64.tar.gz
-	wget -O /home/${USER}/kits/dev/idea.tar.gz https://download.jetbrains.com/idea/ideaIC-2023.3.6.tar.gz
+	wget -O /home/${USER}/kits/dev/eclipse.tar.gz https://ftp.fau.de/eclipse/technology/epp/downloads/release/2024-06/R/eclipse-jee-2024-06-R-linux-gtk-x86_64.tar.gz
+	wget -O /home/${USER}/kits/dev/idea.tar.gz https://download.jetbrains.com/idea/ideaIC-2024.1.3.tar.gz
 	cd /home/${USER}/kits/dev/
 	mkdir eclipse
 	tar -xzvf eclipse.tar.gz -C eclipse --strip-components=1
@@ -247,16 +214,12 @@ function install_terminal() {
 	sudo chsh -s $(which fish) ${USER}
 	fish -c 'curl -sL https://raw.githubusercontent.com/jorgebucaran/fisher/main/functions/fisher.fish | source && fisher install jorgebucaran/fisher'
 	fish -c 'fisher install jorgebucaran/nvm.fish'
+	fidh -c 'fisher install reitzig/sdkman-for-fish@v2.1.0'
 	log SUCC "Added fish shell as default..."
-
 }
 
 function customize_bashrc() {
 cat >> /home/${USER}/.bashrc <<'EOF'
-export JAVA_HOME="/home/${USER}/kits/dev/jdk"
-export M2_HOME="/home/${USER}/kits/dev/mvn"
-export JDK_MVN_SCRIPTS="/home/${USER}/kits/dev/scripts/"
-export PATH="${JAVA_HOME}/bin:${M2_HOME}/bin:${JDK_MVN_SCRIPTS}:${PATH}"
 
 alias upd="sudo dnf update && flatpak update"
 alias update="sudo dnf update && flatpak update"
@@ -367,10 +330,10 @@ log SUCC "Installed postgresql as a development container."
 function step3() {
 	install_dnf_packages
 	install_flatpaks
+	install_nvm
+	install_sdkman
 	install_java_versions
 	install_maven_versions
-	install_scripts
-	install_nvm
 	install_ides
 	install_terminal
 	customize_bashrc
@@ -380,11 +343,8 @@ function step3() {
 
 	log INFO "Cleaning up..."
 	rm -rf /home/${USER}/.cooking/
-	log INFO "Everything is done! After a restart, run the following commands:"
-	log INFO '$ set-jdk 21 zulu'
-	log INFO '$ set-mvn 3.9'
-	log INFO '$ nvm install 18'
-	log INFO "After this, JDK and NodeJS sould be ready to use. Besides 17 with adoptium, but there is also JDK 11 and 8 with zulu and graalvm variants."
+	log INFO "Everything is done!"
+	log INFO "To set JAVA or Maven, please read the documentation provided for sdkman: https://sdkman.io/usage#installdefault"
 	log INFO "Full log available at /home/${USER}/cook.log"
 	log SUCC "Completed! Restarting in 10s ... "
 	sleep 10
