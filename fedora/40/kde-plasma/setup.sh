@@ -220,7 +220,8 @@ function install_terminal() {
 
 function customize_bashrc() {
 cat >> /home/${USER}/.bashrc <<'EOF'
-
+export JAVA_HOME="/home/${USER}/kits/dev/sdkman/candidates/java/current"
+export M2_HOME="/home/${USER}/kits/dev/sdkman/candidates/maven/current"
 alias upd="sudo dnf update && flatpak update"
 alias update="sudo dnf update && flatpak update"
 
@@ -277,8 +278,9 @@ mcfly init fish | source
 fastfetch
 EOF
 
-echo "SETUVAR --export JAVA_HOME:/home/${USER}/kits/dev/jdk" >> /home/${USER}/.config/fish/fish_variables
-echo "SETUVAR --export M2_HOME:/home/${USER}/kits/dev/mvn" >> /home/${USER}/.config/fish/fish_variables
+echo "SETUVAR --export SDKMAN_DIR:/home/${USER}/kits/dev/sdkman" >> /home/${USER}/.config/fish/fish_variables
+echo "SETUVAR --export JAVA_HOME:/home/${USER}/kits/dev/sdkman/candidates/java/current" >> /home/${USER}/.config/fish/fish_variables
+echo "SETUVAR --export M2_HOME:/home/${USER}/kits/dev/sdkman/candidates/maven/current" >> /home/${USER}/.config/fish/fish_variables
 echo "SETUVAR fish_greeting:" >> /home/${USER}/.config/fish/fish_variables
 echo "SETUVAR fish_user_paths:/home/${USER}/kits/dev/scripts\x1e/home/${USER}/kits/dev/mvn/bin\x1e/home/${USER}/kits/dev/jdk/bin" >> /home/${USER}/.config/fish/fish_variables
 }
