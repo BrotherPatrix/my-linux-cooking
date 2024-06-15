@@ -95,7 +95,7 @@ function install_nvm() {
 function install_sdkman() {
 	log INFO "Installing sdkman ..."
 	wget -O /home/${USER}/.cooking/sdkman-install.sh "https://get.sdkman.io"
-	bash /home/${USER}/.cooking/sdkman-install.sh
+	SDKMAN_DIR="/home/${USER}/kits/dev/sdkman" bash /home/${USER}/.cooking/sdkman-install.sh
 	log SUCC "Installed sdkman. After reboot we shall set a default Java and Maven."
 }
 
@@ -310,7 +310,7 @@ After=local-fs.target network-online.target
 Wants=network-online.target
 
 [Container]
-Image=docker.io/library/postgres:15-bookworm
+Image=docker.io/library/postgres:16-bookworm
 AutoUpdate=registry
 PublishPort=5432:5432
 Volume=%h/volumes/dev-postgres:/var/lib/postgresql/data:Z
