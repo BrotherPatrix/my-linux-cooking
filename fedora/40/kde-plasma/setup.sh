@@ -52,7 +52,7 @@ function install_dnf_packages() {
 	log SUCC "Added Fusion repositories."
 	
 	log INFO "Installing other dnf software..."
-	sudo dnf -y install dnf-plugins-core vim podman curl wget kitty git git-lfs neofetch eza flatpak zoxide fzf postgresql\
+	sudo dnf -y install dnf-plugins-core vim podman curl wget kitty git git-lfs fastfetch eza flatpak zoxide fzf postgresql\
 		|| log ERROR 'Could not install other dnf software...' 1
 	log SUCC "Installed dnf packages."
 	log INFO "Initializing git lfs..."
@@ -214,7 +214,7 @@ function install_terminal() {
 	sudo chsh -s $(which fish) ${USER}
 	fish -c 'curl -sL https://raw.githubusercontent.com/jorgebucaran/fisher/main/functions/fisher.fish | source && fisher install jorgebucaran/fisher'
 	fish -c 'fisher install jorgebucaran/nvm.fish'
-	fidh -c 'fisher install reitzig/sdkman-for-fish@v2.1.0'
+	fish -c 'fisher install reitzig/sdkman-for-fish@v2.1.0'
 	log SUCC "Added fish shell as default..."
 }
 
@@ -274,7 +274,7 @@ starship init fish | source
 zoxide init --cmd cd fish | source
 mcfly init fish | source
 
-neofetch
+fastfetch
 EOF
 
 echo "SETUVAR --export JAVA_HOME:/home/${USER}/kits/dev/jdk" >> /home/${USER}/.config/fish/fish_variables
@@ -286,7 +286,7 @@ echo "SETUVAR fish_user_paths:/home/${USER}/kits/dev/scripts\x1e/home/${USER}/ki
 function install_font() {
 	log INFO "Installing font hack-nerd..."
 	cd /home/${USER}/.cooking/
-	wget -O hack-nerd.zip https://github.com/ryanoasis/nerd-fonts/releases/download/v3.1.1/Hack.zip
+	wget -O hack-nerd.zip https://github.com/ryanoasis/nerd-fonts/releases/download/v3.2.1/Hack.zip
 	unzip hack-nerd.zip
 	sudo mkdir -p /usr/local/share/fonts/hack-nerd
 	sudo mv *.ttf /usr/local/share/fonts/hack-nerd/
@@ -300,7 +300,7 @@ function install_font() {
 
 function install_containers() {
 log INFO "Installing postgresql as a development container..."
-podman pull	docker.io/library/postgres:15-bookworm || log ERROR 'Could not pull postgresql container.' 1
+podman pull	docker.io/library/postgres:16-bookworm || log ERROR 'Could not pull postgresql container.' 1
 mkdir -p ${HOME}/volumes/dev-postgres/ || log ERROR 'Could not create volume folder.' 1
 mkdir -p ${HOME}/.config/containers/systemd/ || log ERROR 'Could not create user systemd folder.' 1
 cat >> /home/${USER}/.config/containers/systemd/dev-postgres.container <<'EOF'
