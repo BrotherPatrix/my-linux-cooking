@@ -38,6 +38,12 @@ function step2() {
 	reboot
 }
 
+function remove_dnf_packages() {
+	log INFO "Removing bloatware..."
+	sudo dnf remove -y 'kdeconnect-*' 'akonadi-*' 'kwallet*' kmail korganizer dragon elisa-player neochat
+	log SUCC "Removed blaotware!"
+}
+
 function install_dnf_packages() {
 	log INFO "Removing software..."
 	sudo dnf -y remove java-*
@@ -52,7 +58,11 @@ function install_dnf_packages() {
 	log SUCC "Added Fusion repositories."
 	
 	log INFO "Installing other dnf software..."
-	sudo dnf -y install dnf-plugins-core vim podman curl wget kitty git git-lfs fastfetch eza flatpak zoxide fzf postgresql\
+	sudo dnf -y install dnf-plugins-core \
+		|| log ERROR 'Could not install dnf-plugins-core...' 1
+	sudo dnf -y install vlc obs-studio ffmpeg --allowerasing \
+		|| log ERROR 'Could not install media software...' 1
+	sudo dnf -y install vim podman curl wget kitty git git-lfs fastfetch eza flatpak zoxide fzf postgresql \
 		|| log ERROR 'Could not install other dnf software...' 1
 	log SUCC "Installed dnf packages."
 	log INFO "Initializing git lfs..."
@@ -72,6 +82,7 @@ function install_flatpaks() {
 		io.dbeaver.DBeaverCommunity \
 		com.anydesk.Anydesk \
 		org.libreoffice.LibreOffice \
+		org.onlyoffice.desktopeditors \
 		io.podman_desktop.PodmanDesktop \
 		org.mozilla.Thunderbird \
 		com.discordapp.Discord \
@@ -330,6 +341,7 @@ log SUCC "Installed postgresql as a development container."
 }
 
 function step3() {
+	remove_dnf_packages
 	install_dnf_packages
 	install_flatpaks
 	install_nvm
