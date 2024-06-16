@@ -69,6 +69,14 @@ function install_dnf_packages() {
 		|| log ERROR 'Could not install media software...' 1
 	sudo dnf -y install vim podman curl wget kitty git git-lfs fastfetch eza flatpak zoxide fzf postgresql \
 		|| log ERROR 'Could not install other dnf software...' 1
+	sudo dnf group install --with-optional virtualization \
+		|| log ERROR 'Could not install virtualization software...' 1
+	sudo systemctl start libvirtd \
+		|| log ERROR 'Could not start virtualization service...' 1
+	sudo systemctl enable libvirtd \
+		|| log ERROR 'Could not enable virtualization service...' 1
+	sudo usermod -aG libvirt ${USER} \
+		|| log ERROR 'Could not add virtualization group for current user...' 1
 	log SUCC "Installed dnf packages."
 	log INFO "Initializing git lfs..."
 	git lfs install
@@ -173,7 +181,7 @@ function install_ides {
 
 	echo "[Desktop Entry]" >> /home/${USER}/.local/share/applications/eclipse.desktop
 	echo "Comment=Eclipse IDE installed by cooking script." >> /home/${USER}/.local/share/applications/eclipse.desktop
-	echo "Exec=/home/${USER}/kits/dev/eclipse/eclipse" >> /home/${USER}/.local/share/applications/eclipse.desktop
+	echo "Exec=env GDK_BACKEND=x11 /home/${USER}/kits/dev/eclipse/eclipse" >> /home/${USER}/.local/share/applications/eclipse.desktop
 	echo "GenericName=Eclipse IDE for Enterprise Java and Web Developers" >> /home/${USER}/.local/share/applications/eclipse.desktop
 	echo "Icon=/home/${USER}/kits/dev/eclipse/icon.xpm" >> /home/${USER}/.local/share/applications/eclipse.desktop
 	echo "Name=Eclipse" >> /home/${USER}/.local/share/applications/eclipse.desktop
