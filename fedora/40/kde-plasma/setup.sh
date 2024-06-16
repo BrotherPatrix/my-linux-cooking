@@ -168,6 +168,7 @@ function install_ides {
 	echo "Terminal=false" >> /home/${USER}/.local/share/applications/eclipse.desktop
 	echo "TerminalOptions=" >> /home/${USER}/.local/share/applications/eclipse.desktop
 	echo "Type=Application" >> /home/${USER}/.local/share/applications/eclipse.desktop
+	echo "Categories=Development" >> /home/${USER}/.local/share/applications/eclipse.desktop
 
 	echo "[Desktop Entry]" >> /home/${USER}/.local/share/applications/idea.desktop
 	echo "Comment=IntelliJ IDEA installed by cooking script." >> /home/${USER}/.local/share/applications/idea.desktop
@@ -181,6 +182,7 @@ function install_ides {
 	echo "Terminal=false" >> /home/${USER}/.local/share/applications/idea.desktop
 	echo "TerminalOptions=" >> /home/${USER}/.local/share/applications/idea.desktop
 	echo "Type=Application" >> /home/${USER}/.local/share/applications/idea.desktop
+	echo "Categories=Development" >> /home/${USER}/.local/share/applications/idea.desktop
 
 	log SUCC "Installed Eclipse and Idea."
 
