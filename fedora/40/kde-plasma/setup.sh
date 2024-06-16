@@ -38,6 +38,17 @@ function step2() {
 	reboot
 }
 
+function remove_dnf_packages() {
+	log INFO "Removing bloatware..."
+	sudo dnf groupremove -y libreoffice \
+		|| log ERROR 'Could not remove libreoffice group...' 1
+	sudo dnf remove -y libreoffice* \
+		|| log ERROR 'Could not remove libreoffice remnants...' 1
+	sudo dnf remove -y 'anaconda-*' 'kdeconnect-*' 'akonadi-*' 'kwallet*' kmail korganizer dragon elisa-player neochat \
+		|| log ERROR 'Could not remove other bloatware...' 1
+	log SUCC "Removed blaotware!"
+}
+
 function install_dnf_packages() {
 	log INFO "Removing software..."
 	sudo dnf -y remove java-*
@@ -52,8 +63,20 @@ function install_dnf_packages() {
 	log SUCC "Added Fusion repositories."
 	
 	log INFO "Installing other dnf software..."
-	sudo dnf -y install dnf-plugins-core vim podman curl wget kitty git git-lfs neofetch eza flatpak zoxide fzf postgresql\
+	sudo dnf -y install dnf-plugins-core \
+		|| log ERROR 'Could not install dnf-plugins-core...' 1
+	sudo dnf -y install vlc obs-studio ffmpeg --allowerasing \
+		|| log ERROR 'Could not install media software...' 1
+	sudo dnf -y install vim podman curl wget kitty git git-lfs fastfetch eza flatpak zoxide fzf postgresql \
 		|| log ERROR 'Could not install other dnf software...' 1
+	sudo dnf -y group install --with-optional virtualization \
+		|| log ERROR 'Could not install virtualization software...' 1
+	sudo systemctl start libvirtd \
+		|| log ERROR 'Could not start virtualization service...' 1
+	sudo systemctl enable libvirtd \
+		|| log ERROR 'Could not enable virtualization service...' 1
+	sudo usermod -aG libvirt ${USER} \
+		|| log ERROR 'Could not add virtualization group for current user...' 1
 	log SUCC "Installed dnf packages."
 	log INFO "Initializing git lfs..."
 	git lfs install
@@ -72,6 +95,7 @@ function install_flatpaks() {
 		io.dbeaver.DBeaverCommunity \
 		com.anydesk.Anydesk \
 		org.libreoffice.LibreOffice \
+		org.onlyoffice.desktopeditors \
 		io.podman_desktop.PodmanDesktop \
 		org.mozilla.Thunderbird \
 		com.discordapp.Discord \
@@ -81,91 +105,35 @@ function install_flatpaks() {
 	log SUCC "Installed flatpak packages via Flathub."
 }
 
-function install_java_versions() {
-	log INFO "Setting up JDKs ..."
-
-	## Java 21
-	wget -O /home/${USER}/.cooking/jdk21-adoptium.tar.gz 'https://github.com/adoptium/temurin21-binaries/releases/download/jdk-21.0.2%2B13/OpenJDK21U-jdk_x64_linux_hotspot_21.0.2_13.tar.gz'
-	mkdir -p /home/${USER}/kits/dev/jdks/jdk21-adoptium
-	tar -xzf /home/${USER}/.cooking/jdk21-adoptium.tar.gz -C /home/${USER}/kits/dev/jdks/jdk21-adoptium --strip-components=1
-
-	wget -O /home/${USER}/.cooking/jdk21-zulu.tar.gz 'https://cdn.azul.com/zulu/bin/zulu21.32.17-ca-jdk21.0.2-linux_x64.tar.gz'
-	mkdir -p /home/${USER}/kits/dev/jdks/jdk21-zulu
-	tar -xzf /home/${USER}/.cooking/jdk21-zulu.tar.gz -C /home/${USER}/kits/dev/jdks/jdk21-zulu --strip-components=1
-
-	wget -O /home/${USER}/.cooking/jdk21-graalvm.tar.gz 'https://github.com/graalvm/graalvm-ce-builds/releases/download/jdk-21.0.2/graalvm-community-jdk-21.0.2_linux-x64_bin.tar.gz'
-	mkdir -p /home/${USER}/kits/dev/jdks/jdk21-graalvm
-	tar -xzf /home/${USER}/.cooking/jdk21-graalvm.tar.gz -C /home/${USER}/kits/dev/jdks/jdk21-graalvm --strip-components=1
-
-	## Java 17
-	wget -O /home/${USER}/.cooking/jdk17-adoptium.tar.gz 'https://github.com/adoptium/temurin17-binaries/releases/download/jdk-17.0.10%2B7/OpenJDK17U-jdk_x64_linux_hotspot_17.0.10_7.tar.gz'
-	mkdir -p /home/${USER}/kits/dev/jdks/jdk17-adoptium
-	tar -xzf /home/${USER}/.cooking/jdk17-adoptium.tar.gz -C /home/${USER}/kits/dev/jdks/jdk17-adoptium --strip-components=1
-
-	wget -O /home/${USER}/.cooking/jdk17-zulu.tar.gz 'https://cdn.azul.com/zulu/bin/zulu17.48.15-ca-jdk17.0.10-linux_x64.tar.gz'
-	mkdir -p /home/${USER}/kits/dev/jdks/jdk17-zulu
-	tar -xzf /home/${USER}/.cooking/jdk17-zulu.tar.gz -C /home/${USER}/kits/dev/jdks/jdk17-zulu --strip-components=1
-
-	wget -O /home/${USER}/.cooking/jdk17-graalvm.tar.gz 'https://github.com/graalvm/graalvm-ce-builds/releases/download/jdk-17.0.9/graalvm-community-jdk-17.0.9_linux-x64_bin.tar.gz'
-	mkdir -p /home/${USER}/kits/dev/jdks/jdk17-graalvm
-	tar -xzf /home/${USER}/.cooking/jdk17-graalvm.tar.gz -C /home/${USER}/kits/dev/jdks/jdk17-graalvm --strip-components=1
-
-	## Java 11
-	wget -O /home/${USER}/.cooking/jdk11-adoptium.tar.gz 'https://github.com/adoptium/temurin11-binaries/releases/download/jdk-11.0.22%2B7/OpenJDK11U-jdk_x64_linux_hotspot_11.0.22_7.tar.gz'
-	mkdir -p /home/${USER}/kits/dev/jdks/jdk11-adoptium
-	tar -xzf /home/${USER}/.cooking/jdk11-adoptium.tar.gz -C /home/${USER}/kits/dev/jdks/jdk11-adoptium --strip-components=1
-
-	wget -O /home/${USER}/.cooking/jdk11-zulu.tar.gz 'https://cdn.azul.com/zulu/bin/zulu11.70.15-ca-jdk11.0.22-linux_x64.tar.gz'
-	mkdir -p /home/${USER}/kits/dev/jdks/jdk11-zulu
-	tar -xzf /home/${USER}/.cooking/jdk11-zulu.tar.gz -C /home/${USER}/kits/dev/jdks/jdk11-zulu --strip-components=1
-
-	wget -O /home/${USER}/.cooking/jdk11-graalvm.tar.gz 'https://github.com/graalvm/graalvm-ce-builds/releases/download/vm-22.3.3/graalvm-ce-java11-linux-amd64-22.3.3.tar.gz'
-	mkdir -p /home/${USER}/kits/dev/jdks/jdk11-graalvm
-	tar -xzf /home/${USER}/.cooking/jdk11-graalvm.tar.gz -C /home/${USER}/kits/dev/jdks/jdk11-graalvm --strip-components=1
-
-	## Java 8
-	wget -O /home/${USER}/.cooking/jdk8-adoptium.tar.gz 'https://github.com/adoptium/temurin8-binaries/releases/download/jdk8u402-b06/OpenJDK8U-jdk_x64_linux_hotspot_8u402b06.tar.gz'
-	mkdir -p /home/${USER}/kits/dev/jdks/jdk8-adoptium
-	tar -xzf /home/${USER}/.cooking/jdk8-adoptium.tar.gz -C /home/${USER}/kits/dev/jdks/jdk8-adoptium --strip-components=1
-
-	wget -O /home/${USER}/.cooking/jdk8-zulu.tar.gz 'https://cdn.azul.com/zulu/bin/zulu8.76.0.17-ca-jdk8.0.402-linux_x64.tar.gz'
-	mkdir -p /home/${USER}/kits/dev/jdks/jdk8-zulu
-	tar -xzf /home/${USER}/.cooking/jdk8-zulu.tar.gz -C /home/${USER}/kits/dev/jdks/jdk8-zulu --strip-components=1
-
-	log SUCC "JDKs were added."
-}
-
-function install_maven_versions() {
-	log INFO "Setting up MVNs ..."
-
-	wget -O /home/${USER}/.cooking/mvn-3.8.tar.gz https://dlcdn.apache.org/maven/maven-3/3.8.8/binaries/apache-maven-3.8.8-bin.tar.gz
-	mkdir -p /home/${USER}/kits/dev/mavens/mvn-3.8
-	tar -xzf /home/${USER}/.cooking/mvn-3.8.tar.gz -C /home/${USER}/kits/dev/mavens/mvn-3.8 --strip-components=1
-
-	wget -O /home/${USER}/.cooking/mvn-3.9.tar.gz https://dlcdn.apache.org/maven/maven-3/3.9.6/binaries/apache-maven-3.9.6-bin.tar.gz
-	mkdir -p /home/${USER}/kits/dev/mavens/mvn-3.9
-	tar -xzf /home/${USER}/.cooking/mvn-3.9.tar.gz -C /home/${USER}/kits/dev/mavens/mvn-3.9 --strip-components=1
-
-	log SUCC "MVNs were added."
-}
-
-function install_scripts() {
-	log INFO "Installing JDKs and MVNs util scripts..."
-	mkdir -p /home/${USER}/kits/dev/scripts
-	printf '#!/usr/bin/env bash\nln -snf /home/${USER}/kits/dev/jdks/jdk${1}-${2}/ /home/${USER}/kits/dev/jdk' > /home/${USER}/kits/dev/scripts/set-jdk || log ERROR 'Could not create set-jdk bash script' 1
-	chmod +x /home/${USER}/kits/dev/scripts/set-jdk || log ERROR 'Could not make set-jdk bash script executable!' 1
-	printf '#!/usr/bin/env bash\nln -snf /home/${USER}/kits/dev/mavens/mvn-${1}/ /home/${USER}/kits/dev/mvn' > /home/${USER}/kits/dev/scripts/set-mvn || log ERROR 'Could not create set-mvn bash script' 1
-	chmod +x /home/${USER}/kits/dev/scripts/set-mvn || log ERROR 'Could not make set-mvn bash script executable!' 1
-	/home/${USER}/kits/dev/scripts/set-jdk 21 zulu
-	/home/${USER}/kits/dev/scripts/set-mvn 3.9
-	log SUCC "Installed scripts and used them to set OpenJDK 17 Adoptium with Maven 3.8."
-}
-
 function install_nvm() {
 	log INFO "Installing nvm ..."
-	wget -O /home/${USER}/.cooking/nvm-install.sh https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.7/install.sh
+	wget -O /home/${USER}/.cooking/nvm-install.sh https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.3/install.sh
 	bash /home/${USER}/.cooking/nvm-install.sh
-	log SUCC "Installed nvm. After reboot we shall set a default NodeJS."
+	log SUCC "Installed nvm."
+
+	log INFO "Installing Node 20 candidates."
+	bash -c 'source ~/.bashrc && nvm install 20'
+	log SUCC "Installed Node 20 candidates."
+}
+
+function install_sdkman_and_candidates() {
+	log INFO "Installing sdkman ..."
+	wget -O /home/${USER}/.cooking/sdkman-install.sh "https://get.sdkman.io"
+	SDKMAN_DIR="/home/${USER}/kits/dev/sdkman" bash /home/${USER}/.cooking/sdkman-install.sh
+	log SUCC "Installed sdkman."
+
+	log INFO "Installing Java and Maven candidates ..."
+	echo "java=8.0.412-zulu" > .sdkmanrc
+	echo "java=11.0.23-zulu" >> .sdkmanrc
+	echo "java=17.0.11-zulu" >> .sdkmanrc
+	echo "java=17.0.11-oracle" >> .sdkmanrc
+	echo "java=21.0.3-zulu" >> .sdkmanrc
+	echo "java=21.0.3-oracle" >> .sdkmanrc
+	echo "maven=3.8.8" >> .sdkmanrc
+	echo "maven=3.9.7" >> .sdkmanrc
+	source ~/.bashrc && sdk env install && sdk default java 21.0.3-oracle && sdk default maven 3.9.7 \
+		|| log ERROR 'Could not install Java and Maven candidates...' 1
+	log SUCC "Installed Java and Maven candidates."
 }
 
 function install_ides {
@@ -176,8 +144,8 @@ function install_ides {
 	log SUCC "Installed VSCodium."
 
 	log INFO "Installing Eclipse and Idea for Java Development..."
-	wget -O /home/${USER}/kits/dev/eclipse.tar.gz https://ftp.fau.de/eclipse/technology/epp/downloads/release/2024-03/R/eclipse-jee-2024-03-R-linux-gtk-x86_64.tar.gz
-	wget -O /home/${USER}/kits/dev/idea.tar.gz https://download.jetbrains.com/idea/ideaIC-2023.3.6.tar.gz
+	wget -O /home/${USER}/kits/dev/eclipse.tar.gz https://ftp.fau.de/eclipse/technology/epp/downloads/release/2024-06/R/eclipse-jee-2024-06-R-linux-gtk-x86_64.tar.gz
+	wget -O /home/${USER}/kits/dev/idea.tar.gz https://download.jetbrains.com/idea/ideaIC-2024.1.3.tar.gz
 	cd /home/${USER}/kits/dev/
 	mkdir eclipse
 	tar -xzvf eclipse.tar.gz -C eclipse --strip-components=1
@@ -190,7 +158,7 @@ function install_ides {
 
 	echo "[Desktop Entry]" >> /home/${USER}/.local/share/applications/eclipse.desktop
 	echo "Comment=Eclipse IDE installed by cooking script." >> /home/${USER}/.local/share/applications/eclipse.desktop
-	echo "Exec=/home/${USER}/kits/dev/eclipse/eclipse" >> /home/${USER}/.local/share/applications/eclipse.desktop
+	echo "Exec=env GDK_BACKEND=x11 /home/${USER}/kits/dev/eclipse/eclipse" >> /home/${USER}/.local/share/applications/eclipse.desktop
 	echo "GenericName=Eclipse IDE for Enterprise Java and Web Developers" >> /home/${USER}/.local/share/applications/eclipse.desktop
 	echo "Icon=/home/${USER}/kits/dev/eclipse/icon.xpm" >> /home/${USER}/.local/share/applications/eclipse.desktop
 	echo "Name=Eclipse" >> /home/${USER}/.local/share/applications/eclipse.desktop
@@ -200,6 +168,7 @@ function install_ides {
 	echo "Terminal=false" >> /home/${USER}/.local/share/applications/eclipse.desktop
 	echo "TerminalOptions=" >> /home/${USER}/.local/share/applications/eclipse.desktop
 	echo "Type=Application" >> /home/${USER}/.local/share/applications/eclipse.desktop
+	echo "Categories=Development" >> /home/${USER}/.local/share/applications/eclipse.desktop
 
 	echo "[Desktop Entry]" >> /home/${USER}/.local/share/applications/idea.desktop
 	echo "Comment=IntelliJ IDEA installed by cooking script." >> /home/${USER}/.local/share/applications/idea.desktop
@@ -213,6 +182,7 @@ function install_ides {
 	echo "Terminal=false" >> /home/${USER}/.local/share/applications/idea.desktop
 	echo "TerminalOptions=" >> /home/${USER}/.local/share/applications/idea.desktop
 	echo "Type=Application" >> /home/${USER}/.local/share/applications/idea.desktop
+	echo "Categories=Development" >> /home/${USER}/.local/share/applications/idea.desktop
 
 	log SUCC "Installed Eclipse and Idea."
 
@@ -247,17 +217,14 @@ function install_terminal() {
 	sudo chsh -s $(which fish) ${USER}
 	fish -c 'curl -sL https://raw.githubusercontent.com/jorgebucaran/fisher/main/functions/fisher.fish | source && fisher install jorgebucaran/fisher'
 	fish -c 'fisher install jorgebucaran/nvm.fish'
+	fish -c 'fisher install reitzig/sdkman-for-fish@v2.1.0'
 	log SUCC "Added fish shell as default..."
-
 }
 
 function customize_bashrc() {
 cat >> /home/${USER}/.bashrc <<'EOF'
-export JAVA_HOME="/home/${USER}/kits/dev/jdk"
-export M2_HOME="/home/${USER}/kits/dev/mvn"
-export JDK_MVN_SCRIPTS="/home/${USER}/kits/dev/scripts/"
-export PATH="${JAVA_HOME}/bin:${M2_HOME}/bin:${JDK_MVN_SCRIPTS}:${PATH}"
-
+export JAVA_HOME="/home/${USER}/kits/dev/sdkman/candidates/java/current"
+export M2_HOME="/home/${USER}/kits/dev/sdkman/candidates/maven/current"
 alias upd="sudo dnf update && flatpak update"
 alias update="sudo dnf update && flatpak update"
 
@@ -311,11 +278,12 @@ starship init fish | source
 zoxide init --cmd cd fish | source
 mcfly init fish | source
 
-neofetch
+fastfetch
 EOF
 
-echo "SETUVAR --export JAVA_HOME:/home/${USER}/kits/dev/jdk" >> /home/${USER}/.config/fish/fish_variables
-echo "SETUVAR --export M2_HOME:/home/${USER}/kits/dev/mvn" >> /home/${USER}/.config/fish/fish_variables
+echo "SETUVAR --export SDKMAN_DIR:/home/${USER}/kits/dev/sdkman" >> /home/${USER}/.config/fish/fish_variables
+echo "SETUVAR --export JAVA_HOME:/home/${USER}/kits/dev/sdkman/candidates/java/current" >> /home/${USER}/.config/fish/fish_variables
+echo "SETUVAR --export M2_HOME:/home/${USER}/kits/dev/sdkman/candidates/maven/current" >> /home/${USER}/.config/fish/fish_variables
 echo "SETUVAR fish_greeting:" >> /home/${USER}/.config/fish/fish_variables
 echo "SETUVAR fish_user_paths:/home/${USER}/kits/dev/scripts\x1e/home/${USER}/kits/dev/mvn/bin\x1e/home/${USER}/kits/dev/jdk/bin" >> /home/${USER}/.config/fish/fish_variables
 }
@@ -323,7 +291,7 @@ echo "SETUVAR fish_user_paths:/home/${USER}/kits/dev/scripts\x1e/home/${USER}/ki
 function install_font() {
 	log INFO "Installing font hack-nerd..."
 	cd /home/${USER}/.cooking/
-	wget -O hack-nerd.zip https://github.com/ryanoasis/nerd-fonts/releases/download/v3.1.1/Hack.zip
+	wget -O hack-nerd.zip https://github.com/ryanoasis/nerd-fonts/releases/download/v3.2.1/Hack.zip
 	unzip hack-nerd.zip
 	sudo mkdir -p /usr/local/share/fonts/hack-nerd
 	sudo mv *.ttf /usr/local/share/fonts/hack-nerd/
@@ -337,7 +305,7 @@ function install_font() {
 
 function install_containers() {
 log INFO "Installing postgresql as a development container..."
-podman pull	docker.io/library/postgres:15-bookworm || log ERROR 'Could not pull postgresql container.' 1
+podman pull	docker.io/library/postgres:16-bookworm || log ERROR 'Could not pull postgresql container.' 1
 mkdir -p ${HOME}/volumes/dev-postgres/ || log ERROR 'Could not create volume folder.' 1
 mkdir -p ${HOME}/.config/containers/systemd/ || log ERROR 'Could not create user systemd folder.' 1
 cat >> /home/${USER}/.config/containers/systemd/dev-postgres.container <<'EOF'
@@ -347,7 +315,7 @@ After=local-fs.target network-online.target
 Wants=network-online.target
 
 [Container]
-Image=docker.io/library/postgres:15-bookworm
+Image=docker.io/library/postgres:16-bookworm
 AutoUpdate=registry
 PublishPort=5432:5432
 Volume=%h/volumes/dev-postgres:/var/lib/postgresql/data:Z
@@ -365,12 +333,11 @@ log SUCC "Installed postgresql as a development container."
 }
 
 function step3() {
+	remove_dnf_packages
 	install_dnf_packages
 	install_flatpaks
-	install_java_versions
-	install_maven_versions
-	install_scripts
 	install_nvm
+	install_sdkman_and_candidates
 	install_ides
 	install_terminal
 	customize_bashrc
@@ -380,11 +347,8 @@ function step3() {
 
 	log INFO "Cleaning up..."
 	rm -rf /home/${USER}/.cooking/
-	log INFO "Everything is done! After a restart, run the following commands:"
-	log INFO '$ set-jdk 21 zulu'
-	log INFO '$ set-mvn 3.9'
-	log INFO '$ nvm install 18'
-	log INFO "After this, JDK and NodeJS sould be ready to use. Besides 17 with adoptium, but there is also JDK 11 and 8 with zulu and graalvm variants."
+	log INFO "Everything is done!"
+	log INFO "To set JAVA or Maven, please read the documentation provided for sdkman: https://sdkman.io/usage#installdefault"
 	log INFO "Full log available at /home/${USER}/cook.log"
 	log SUCC "Completed! Restarting in 10s ... "
 	sleep 10
