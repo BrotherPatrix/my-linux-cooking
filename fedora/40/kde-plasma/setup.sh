@@ -69,7 +69,7 @@ function install_dnf_packages() {
 		|| log ERROR 'Could not install media software...' 1
 	sudo dnf -y install vim podman curl wget kitty git git-lfs fastfetch eza flatpak zoxide fzf postgresql \
 		|| log ERROR 'Could not install other dnf software...' 1
-	sudo dnf group install --with-optional virtualization \
+	sudo dnf -y group install --with-optional virtualization \
 		|| log ERROR 'Could not install virtualization software...' 1
 	sudo systemctl start libvirtd \
 		|| log ERROR 'Could not start virtualization service...' 1
