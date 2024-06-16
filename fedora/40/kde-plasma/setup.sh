@@ -116,47 +116,24 @@ function install_nvm() {
 	log SUCC "Installed Node 20 candidates."
 }
 
-function install_sdkman() {
+function install_sdkman_and_candidates() {
 	log INFO "Installing sdkman ..."
 	wget -O /home/${USER}/.cooking/sdkman-install.sh "https://get.sdkman.io"
 	SDKMAN_DIR="/home/${USER}/kits/dev/sdkman" bash /home/${USER}/.cooking/sdkman-install.sh
-	log SUCC "Installed sdkman. After reboot we shall set a default Java and Maven."
-}
+	log SUCC "Installed sdkman."
 
-function install_java_versions() {
-	log INFO "Setting up JDKs ..."
-
-	log INFO "Installing Java 8 candidates."
-	bash -c 'source ~/.bashrc && sdk install java 8.0.412-zulu'
-	log SUCC "Installed Java 8 candidates."
-
-	log INFO "Installing Java 11 candidates."
-	bash -c 'source ~/.bashrc && sdk install java 11.0.23-zulu'
-	log SUCC "Installed Java 11 candidates."
-
-	log INFO "Installing Java 17 candidates."
-	bash -c 'source ~/.bashrc && sdk install java 17.0.11-zulu && sdk install java 17.0.11-oracle'
-	log SUCC "Installed Java 17 candidates."
-
-	log INFO "Installing Java 21 candidates."
-	bash -c 'source ~/.bashrc && sdk install java 21.0.3-zulu && sdk install java 21.0.3-oracle'
-	log SUCC "Installed Java 21 candidates."
-
-	log SUCC "JDKs were added."
-}
-
-function install_maven_versions() {
-	log INFO "Setting up MVNs ..."
-
-	log INFO "Installing Maven 3.8.8 candidates."
-	bash -c 'source ~/.bashrc && sdk install maven 3.8.8'
-	log SUCC "Installed Maven 3.8.8 candidates."
-
-	log INFO "Installing Maven 3.9.7 candidates."
-	bash -c 'source ~/.bashrc && sdk install maven 3.9.7'
-	log SUCC "Installed Maven 3.9.7 candidates."
-
-	log SUCC "MVNs were added."
+	log INFO "Installing Java and Maven candidates ..."
+	echo "java=8.0.412-zulu" > .sdkmanrc
+	echo "java=11.0.23-zulu" >> .sdkmanrc
+	echo "java=17.0.11-zulu" >> .sdkmanrc
+	echo "java=17.0.11-oracle" >> .sdkmanrc
+	echo "java=21.0.3-zulu" >> .sdkmanrc
+	echo "java=21.0.3-oracle" >> .sdkmanrc
+	echo "maven=3.8.8" >> .sdkmanrc
+	echo "maven=3.9.7" >> .sdkmanrc
+	source ~/.bashrc && sdk env install \
+		|| log ERROR 'Could not install Java and Maven candidates...' 1
+	log SUCC "Installed Java and Maven candidates."
 }
 
 function install_ides {
@@ -358,9 +335,7 @@ function step3() {
 	install_dnf_packages
 	install_flatpaks
 	install_nvm
-	install_sdkman
-	install_java_versions
-	install_maven_versions
+	install_sdkman_and_candidates
 	install_ides
 	install_terminal
 	customize_bashrc
