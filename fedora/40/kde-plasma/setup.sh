@@ -238,8 +238,9 @@ alias l='eza -1'                                                                
 alias ls='eza -al --color=always --group-directories-first --icons'                 # preferred listing
 alias la='eza -a --color=always --group-directories-first --icons'                  # all files and dirs
 alias ll='eza -laB --sort name --time-style long-iso --git --icons --color=always'  # long format
+alias lh='eza -lah --sort name --time-style long-iso --git --icons --color=always'  # long format
 alias lt='eza -aT --color=always --group-directories-first --icons'                 # tree listing
-alias l.="eza -a | egrep '^\.'"                                                     # show only dotfiles
+alias l.="eza -a | grep -E '^\.'"                                                     # show only dotfiles
 
 eval "$(zoxide init --cmd cd bash)"
 eval "$(mcfly init bash)"
@@ -255,7 +256,7 @@ alias update="sudo dnf update && flatpak update"
 
 alias grubup="sudo update-grub"
 
-alias ssh="TERM=xterm-color ssh"
+alias ssh="TERM=xterm-color command ssh"
 
 alias ..='cd ..'
 alias ...='cd ../..'
@@ -269,8 +270,9 @@ alias l='eza -1'                                                                
 alias ls='eza -al --color=always --group-directories-first --icons'                 # preferred listing
 alias la='eza -a --color=always --group-directories-first --icons'                  # all files and dirs
 alias ll='eza -laB --sort name --time-style long-iso --git --icons --color=always'  # long format
+alias lh='eza -lah --sort name --time-style long-iso --git --icons --color=always'  # long format
 alias lt='eza -aT --color=always --group-directories-first --icons'                 # tree listing
-alias l.="eza -a | egrep '^\.'"                                                     # show only dotfiles
+alias l.="eza -a | grep -E '^\.'"                                                     # show only dotfiles
 
 alias web-ip="curl ifconfig.me"
 
