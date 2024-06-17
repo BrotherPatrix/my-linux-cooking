@@ -19,13 +19,15 @@ function step1() {
 	log SUCC "Updated system! Setting step 2! Restarting in 10s ..."
 	printf "2" > /home/${USER}/.cooking/.step
 	sleep 10
-	reboot
+	systemctl reboot
 }
 
 function set_hostmane() {
 	log INFO "Setting hostname to ${USER}-work ..."
 	sudo hostnamectl set-hostname --static ${USER}-work || log ERROR 'Could not set device name...' 1
-	sudo sed -i "s/$(hostname)/${USER}-work/g" /etc/hosts || log ERROR 'Could not set hosts...' 1
+	sudo sed -i "s/^127\.0\.0\.1.*/127.0.0.1 localhost localhost.localdomain localhost4 localhost4.localdomain4 ${USER}-work/g" /etc/hosts || log ERROR 'Could not set hosts...' 1
+	sudo sed -i "s/^127\.0\.1\.1.*/127.0.1.1 ${USER}-work.${USER}-work ${USER}-work/g" /etc/hosts || log ERROR 'Could not set hosts...' 1
+	sudo sed -i "s/^::1.*/::1 localhost localhost.localdomain localhost6 localhost6.localdomain6 ip6-localhost ip6-loopback ${USER}-work/g" /etc/hosts || log ERROR 'Could not set hosts...' 1
 	log SUCC "Updated hostname. This hostname will be updated after reboot"
 }
 
@@ -35,24 +37,22 @@ function step2() {
 	log SUCC "Updated system! Setting step 3! Restarting in 10s ..."
 	printf "3" > /home/${USER}/.cooking/.step
 	sleep 10
-	reboot
+	systemctl reboot
 }
-## TODO: from here
+
 function remove_dnf_packages() {
 	log INFO "Removing bloatware..."
-	sudo dnf groupremove -y libreoffice \
+	sudo apt remove -y 'libreoffice*' \
 		|| log ERROR 'Could not remove libreoffice group...' 1
-	sudo dnf remove -y libreoffice* \
-		|| log ERROR 'Could not remove libreoffice remnants...' 1
-	sudo dnf remove -y 'anaconda-*' 'kdeconnect-*' 'akonadi-*' 'kwallet*' kmail korganizer dragon elisa-player neochat \
+	sudo apt remove -y 'anaconda-*' 'kdeconnect-*' 'akonadi-*' 'kwallet*' kmail korganizer dragon elisa-player neochat \
 		|| log ERROR 'Could not remove other bloatware...' 1
 	log SUCC "Removed blaotware!"
 }
-
+## TODO: from here...
 function install_dnf_packages() {
 	log INFO "Removing software..."
-	sudo dnf -y remove java-*
-	sudo dnf -y remove thunderbird
+	sudo apt -y remove java-*
+	sudo apt -y remove thunderbird
 	log SUCC "Removed unwanted packages."
 
 	log INFO "Atempting to add Fusion repositories..."
@@ -354,7 +354,7 @@ function step3() {
 	log INFO "Full log available at /home/${USER}/cook.log"
 	log SUCC "Completed! Restarting in 10s ... "
 	sleep 10
-	reboot
+	systemctl reboot
 }
 
 function installstep() {
