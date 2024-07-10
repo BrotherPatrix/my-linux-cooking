@@ -223,6 +223,12 @@ function install_terminal() {
 
 function customize_bashrc() {
 cat >> /home/${USER}/.bashrc <<'EOF'
+# If not running interactively, don't do anything
+case $- in
+    *i*) ;;
+      *) return;;
+esac
+
 export JAVA_HOME="/home/${USER}/kits/dev/sdkman/candidates/java/current"
 export M2_HOME="/home/${USER}/kits/dev/sdkman/candidates/maven/current"
 alias upd="sudo dnf update && flatpak update"
@@ -240,7 +246,7 @@ alias la='eza -a --color=always --group-directories-first --icons'              
 alias ll='eza -laB --sort name --time-style long-iso --git --icons --color=always'  # long format
 alias lh='eza -lah --sort name --time-style long-iso --git --icons --color=always'  # long format
 alias lt='eza -aT --color=always --group-directories-first --icons'                 # tree listing
-alias l.="eza -a | grep -E '^\.'"                                                     # show only dotfiles
+alias l.="eza -a | grep -E '^\.'"                                                   # show only dotfiles
 
 eval "$(zoxide init --cmd cd bash)"
 eval "$(mcfly init bash)"
@@ -250,6 +256,11 @@ EOF
 
 function customize_fish() {
 cat >> /home/${USER}/.config/fish/config.fish <<'EOF'
+# If not running interactively, don't do anything
+if not status is-interactive
+  return
+end
+
 # Common use
 alias upd="sudo dnf update && flatpak update"
 alias update="sudo dnf update && flatpak update"
