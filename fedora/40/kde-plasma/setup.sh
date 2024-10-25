@@ -144,7 +144,7 @@ function install_ides {
 	log SUCC "Installed VSCodium."
 
 	log INFO "Installing Eclipse and Idea for Java Development..."
-	wget -O /home/${USER}/kits/dev/eclipse.tar.gz https://ftp.fau.de/eclipse/technology/epp/downloads/release/2024-06/R/eclipse-jee-2024-06-R-linux-gtk-x86_64.tar.gz
+	wget -O /home/${USER}/kits/dev/eclipse.tar.gz https://ftp.halifax.rwth-aachen.de/eclipse/technology/epp/downloads/release/2024-09/R/eclipse-jee-2024-09-R-linux-gtk-x86_64.tar.gz
 	wget -O /home/${USER}/kits/dev/idea.tar.gz https://download.jetbrains.com/idea/ideaIC-2024.1.3.tar.gz
 	cd /home/${USER}/kits/dev/
 	mkdir eclipse
