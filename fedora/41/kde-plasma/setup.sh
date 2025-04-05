@@ -40,7 +40,7 @@ function step2() {
 
 function remove_dnf_packages() {
 	log INFO "Removing bloatware..."
-	sudo dnf groupremove -y libreoffice \
+	sudo dnf group remove -y libreoffice \
 		|| log ERROR 'Could not remove libreoffice group...' 1
 	sudo dnf remove -y libreoffice* \
 		|| log ERROR 'Could not remove libreoffice remnants...' 1
