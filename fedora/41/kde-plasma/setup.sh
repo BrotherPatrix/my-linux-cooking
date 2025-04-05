@@ -67,7 +67,7 @@ function install_dnf_packages() {
 		|| log ERROR 'Could not install dnf-plugins-core...' 1
 	sudo dnf -y install vlc obs-studio ffmpeg --allowerasing \
 		|| log ERROR 'Could not install media software...' 1
-	sudo dnf -y install vim podman curl wget kitty git git-lfs fastfetch eza flatpak zoxide fzf postgresql \
+	sudo dnf -y install vim podman curl wget kitty git git-lfs fastfetch eza flatpak zoxide fzf postgresql btop \
 		|| log ERROR 'Could not install other dnf software...' 1
 	sudo dnf -y group install --with-optional virtualization \
 		|| log ERROR 'Could not install virtualization software...' 1
@@ -123,15 +123,15 @@ function install_sdkman_and_candidates() {
 	log SUCC "Installed sdkman."
 
 	log INFO "Installing Java and Maven candidates ..."
-	echo "java=8.0.412-zulu" > .sdkmanrc
-	echo "java=11.0.23-zulu" >> .sdkmanrc
-	echo "java=17.0.11-zulu" >> .sdkmanrc
-	echo "java=17.0.11-oracle" >> .sdkmanrc
-	echo "java=21.0.3-zulu" >> .sdkmanrc
-	echo "java=21.0.3-oracle" >> .sdkmanrc
+	echo "java=8.0.442-zulu" > .sdkmanrc
+	echo "java=11.0.26-zulu" >> .sdkmanrc
+	echo "java=17.0.14-zulu" >> .sdkmanrc
+	echo "java=17.0.12-oracle" >> .sdkmanrc
+	echo "java=21.0.6-zulu" >> .sdkmanrc
+	echo "java=21.0.6-oracle" >> .sdkmanrc
 	echo "maven=3.8.8" >> .sdkmanrc
-	echo "maven=3.9.7" >> .sdkmanrc
-	source ~/.bashrc && sdk env install && sdk default java 21.0.3-oracle && sdk default maven 3.9.7 \
+	echo "maven=3.9.9" >> .sdkmanrc
+	source ~/.bashrc && sdk env install && sdk default java 21.0.6-oracle && sdk default maven 3.9.9 \
 		|| log ERROR 'Could not install Java and Maven candidates...' 1
 	log SUCC "Installed Java and Maven candidates."
 }
@@ -139,19 +139,22 @@ function install_sdkman_and_candidates() {
 function install_ides {
 	log INFO "Installing VSCodium for frontend development..."
 	sudo rpmkeys --import https://gitlab.com/paulcarroty/vscodium-deb-rpm-repo/-/raw/master/pub.gpg
-	printf "[gitlab.com_paulcarroty_vscodium_repo]\nname=download.vscodium.com\nbaseurl=https://download.vscodium.com/rpms/\nenabled=1\ngpgcheck=1\nrepo_gpgcheck=1\ngpgkey=https://gitlab.com/paulcarroty/vscodium-deb-rpm-repo/-/raw/master/pub.gpg\nmetadata_expire=1h" | sudo tee -a /etc/yum.repos.d/vscodium.repo
+	printf "[gitlab.com_paulcarroty_vscodium_repo]\nname=download.vscodium.com\nbaseurl=https://download.vscodium.com/rpms/\nenabled=1\ngpgcheck=1\nrepo_gpgcheck=1\ngpgkey=https://gitlab.com/paulcarroty/vscodium-deb-rpm-repo/-/raw/master/pub.gpg\nmetadata_expire=1h\n" | sudo tee -a /etc/yum.repos.d/vscodium.repo
 	sudo dnf -y install codium || log ERROR 'Could not install other dnf software...' 1
 	log SUCC "Installed VSCodium."
 
 	log INFO "Installing Eclipse and Idea for Java Development..."
-	wget -O /home/${USER}/kits/dev/eclipse.tar.gz https://ftp.halifax.rwth-aachen.de/eclipse/technology/epp/downloads/release/2024-09/R/eclipse-jee-2024-09-R-linux-gtk-x86_64.tar.gz
-	wget -O /home/${USER}/kits/dev/idea.tar.gz https://download.jetbrains.com/idea/ideaIC-2024.1.3.tar.gz
+	wget -O /home/${USER}/kits/dev/eclipse.tar.gz https://ftp.halifax.rwth-aachen.de/eclipse/technology/epp/downloads/release/2025-03/R/eclipse-jee-2025-03-R-linux-gtk-x86_64.tar.gz
+	wget -O /home/${USER}/kits/dev/idea.tar.gz https://download.jetbrains.com/idea/ideaIC-2024.3.5.tar.gz
+	wget -O /home/${USER}/kits/dev/kse.zip https://github.com/kaikramer/keystore-explorer/releases/download/v5.5.3/kse-553.zip
 	cd /home/${USER}/kits/dev/
 	mkdir eclipse
 	tar -xzvf eclipse.tar.gz -C eclipse --strip-components=1
 	mkdir idea
 	tar -xzvf idea.tar.gz -C idea --strip-components=1
-	rm -rf *.tar.gz
+	unzip kse.zip
+	mv kse-553 kse
+	rm -rf *.tar.gz *.zip
 	cd -
 
 	mkdir -p /home/${USER}/.local/share/applications/
@@ -184,7 +187,21 @@ function install_ides {
 	echo "Type=Application" >> /home/${USER}/.local/share/applications/idea.desktop
 	echo "Categories=Development" >> /home/${USER}/.local/share/applications/idea.desktop
 
-	log SUCC "Installed Eclipse and Idea."
+	echo "[Desktop Entry]" >> /home/${USER}/.local/share/applications/kse.desktop
+	echo "Comment=KeyStore Explorer installed by cooking script." >> /home/${USER}/.local/share/applications/kse.desktop
+	echo "Exec=/home/${USER}/kits/dev/kse/kse.sh" >> /home/${USER}/.local/share/applications/kse.desktop
+	echo "GenericName=KeyStore Explorer" >> /home/${USER}/.local/share/applications/kse.desktop
+	echo "Icon=/home/${USER}/kits/dev/kse/icons/kse_512.png" >> /home/${USER}/.local/share/applications/kse.desktop
+	echo "Name=KeyStore Explorer" >> /home/${USER}/.local/share/applications/kse.desktop
+	echo "NoDisplay=false" >> /home/${USER}/.local/share/applications/kse.desktop
+	echo "Path=" >> /home/${USER}/.local/share/applications/kse.desktop
+	echo "StartupNotify=true" >> /home/${USER}/.local/share/applications/kse.desktop
+	echo "Terminal=false" >> /home/${USER}/.local/share/applications/kse.desktop
+	echo "TerminalOptions=" >> /home/${USER}/.local/share/applications/kse.desktop
+	echo "Type=Application" >> /home/${USER}/.local/share/applications/kse.desktop
+	echo "Categories=Development" >> /home/${USER}/.local/share/applications/kse.desktop
+
+	log SUCC "Installed Eclipse, Idea and KeyStore Explorer."
 
 }
 
@@ -304,7 +321,7 @@ echo "SETUVAR fish_user_paths:/home/${USER}/kits/dev/scripts\x1e/home/${USER}/ki
 function install_font() {
 	log INFO "Installing font hack-nerd..."
 	cd /home/${USER}/.cooking/
-	wget -O hack-nerd.zip https://github.com/ryanoasis/nerd-fonts/releases/download/v3.2.1/Hack.zip
+	wget -O hack-nerd.zip https://github.com/ryanoasis/nerd-fonts/releases/download/v3.3.0/Hack.zip
 	unzip hack-nerd.zip
 	sudo mkdir -p /usr/local/share/fonts/hack-nerd
 	sudo mv *.ttf /usr/local/share/fonts/hack-nerd/
