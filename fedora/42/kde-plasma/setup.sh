@@ -67,7 +67,7 @@ function install_dnf_packages() {
 		|| log ERROR 'Could not install dnf-plugins-core...' 1
 	sudo dnf -y install vlc obs-studio ffmpeg --allowerasing \
 		|| log ERROR 'Could not install media software...' 1
-	sudo dnf -y install vim podman curl wget git git-lfs fastfetch eza flatpak zoxide fzf postgresql btop alacritty\
+	sudo dnf -y install vim podman curl wget git git-lfs fastfetch flatpak zoxide fzf postgresql btop alacritty\
 		|| log ERROR 'Could not install other dnf software...' 1
 	sudo dnf -y group install --with-optional virtualization \
 		|| log ERROR 'Could not install virtualization software...' 1
@@ -85,8 +85,13 @@ function install_dnf_packages() {
 
 	log INFO "Installing zellij..."
 	wget -qO- https://github.com/zellij-org/zellij/releases/download/v0.43.1/zellij-x86_64-unknown-linux-musl.tar.gz \
-		| sudo tar -xz -C /usr/local/bin zellij || log ERROR 'Could not enable virtualization service...' 1
+		| sudo tar -xz -C /usr/local/bin zellij || log ERROR 'Could not install zellij...' 1
 	log SUCC "Installed zellij."
+
+	log INFO "Installing eza..."
+	wget -qO- https://github.com/eza-community/eza/releases/download/v0.23.0/eza_x86_64-unknown-linux-gnu.tar.gz \
+		| sudo tar -xz -C /usr/local/bin eza || log ERROR 'Could not install eza...' 1
+	log SUCC "Installed eza."
 
 }
 
