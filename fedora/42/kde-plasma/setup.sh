@@ -90,7 +90,7 @@ function install_dnf_packages() {
 
 	log INFO "Installing eza..."
 	wget -qO- https://github.com/eza-community/eza/releases/download/v0.23.0/eza_x86_64-unknown-linux-gnu.tar.gz \
-		| sudo tar -xz -C /usr/local/bin eza || log ERROR 'Could not install eza...' 1
+		| sudo tar -xz -C /usr/local/bin ./eza || log ERROR 'Could not install eza...' 1
 	log SUCC "Installed eza."
 
 }
