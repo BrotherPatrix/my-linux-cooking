@@ -164,7 +164,7 @@ function install_ides {
 	mkdir idea
 	tar -xzvf idea.tar.gz -C idea --strip-components=1
 	unzip kse.zip
-	mv kse-553 kse
+	mv kse-560 kse
 	rm -rf *.tar.gz *.zip
 	cd -
 
