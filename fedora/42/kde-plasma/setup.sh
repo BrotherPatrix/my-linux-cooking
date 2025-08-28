@@ -274,7 +274,7 @@ alias grubup="sudo update-grub"
 alias ssh="TERM=xterm-color ssh"
 
 ## Useful aliases
-# Replace ls with exa
+# Replace ls with eza
 alias l='eza -1'                                                                    # nothing special
 alias ls='eza -al --color=always --group-directories-first --icons'                 # preferred listing
 alias la='eza -a --color=always --group-directories-first --icons'                  # all files and dirs
