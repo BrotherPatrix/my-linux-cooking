@@ -134,14 +134,14 @@ function install_sdkman_and_candidates() {
 	log SUCC "Installed sdkman."
 
 	log INFO "Installing Java and Maven candidates ..."
-	echo "java=8.0.442-zulu" > .sdkmanrc
+	echo "java=8.0.462-zulu" > .sdkmanrc
 	echo "java=11.0.26-zulu" >> .sdkmanrc
-	echo "java=17.0.14-zulu" >> .sdkmanrc
+	echo "java=17.0.16-zulu" >> .sdkmanrc
 	echo "java=17.0.12-oracle" >> .sdkmanrc
-	echo "java=21.0.6-zulu" >> .sdkmanrc
-	echo "java=21.0.6-oracle" >> .sdkmanrc
-	echo "maven=3.8.8" >> .sdkmanrc
-	echo "maven=3.9.9" >> .sdkmanrc
+	echo "java=21.0.8-zulu" >> .sdkmanrc
+	echo "java=21.0.8-oracle" >> .sdkmanrc
+	echo "maven=3.8.9" >> .sdkmanrc
+	echo "maven=3.9.11" >> .sdkmanrc
 	source ~/.bashrc && sdk env install && sdk default java 21.0.6-oracle && sdk default maven 3.9.9 \
 		|| log ERROR 'Could not install Java and Maven candidates...' 1
 	log SUCC "Installed Java and Maven candidates."
@@ -155,9 +155,9 @@ function install_ides {
 	log SUCC "Installed VSCodium."
 
 	log INFO "Installing Eclipse and Idea for Java Development..."
-	wget -O /home/${USER}/kits/dev/eclipse.tar.gz https://ftp.halifax.rwth-aachen.de/eclipse/technology/epp/downloads/release/2025-03/R/eclipse-jee-2025-03-R-linux-gtk-x86_64.tar.gz
-	wget -O /home/${USER}/kits/dev/idea.tar.gz https://download.jetbrains.com/idea/ideaIC-2024.3.5.tar.gz
-	wget -O /home/${USER}/kits/dev/kse.zip https://github.com/kaikramer/keystore-explorer/releases/download/v5.5.3/kse-553.zip
+	wget -O /home/${USER}/kits/dev/eclipse.tar.gz https://ftp.halifax.rwth-aachen.de/eclipse/technology/epp/downloads/release/2025-06/R/eclipse-jee-2025-06-R-linux-gtk-x86_64.tar.gz
+	wget -O /home/${USER}/kits/dev/idea.tar.gz https://download.jetbrains.com/idea/ideaIC-2025.2.tar.gz
+	wget -O /home/${USER}/kits/dev/kse.zip https://github.com/kaikramer/keystore-explorer/releases/download/v5.6.0/kse-560.zip
 	cd /home/${USER}/kits/dev/
 	mkdir eclipse
 	tar -xzvf eclipse.tar.gz -C eclipse --strip-components=1
