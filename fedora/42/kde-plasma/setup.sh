@@ -186,7 +186,7 @@ function install_ides {
 
 	echo "[Desktop Entry]" >> /home/${USER}/.local/share/applications/idea.desktop
 	echo "Comment=IntelliJ IDEA installed by cooking script." >> /home/${USER}/.local/share/applications/idea.desktop
-	echo "Exec=/home/${USER}/kits/dev/idea/bin/idea.sh" >> /home/${USER}/.local/share/applications/idea.desktop
+	echo "Exec=/home/${USER}/kits/dev/idea/bin/idea" >> /home/${USER}/.local/share/applications/idea.desktop
 	echo "GenericName=IntelliJ IDEA" >> /home/${USER}/.local/share/applications/idea.desktop
 	echo "Icon=/home/${USER}/kits/dev/idea/bin/idea.svg" >> /home/${USER}/.local/share/applications/idea.desktop
 	echo "Name=IntelliJ IDEA" >> /home/${USER}/.local/share/applications/idea.desktop
@@ -343,7 +343,7 @@ echo "SETUVAR fish_user_paths:/home/${USER}/kits/dev/scripts\x1e/home/${USER}/ki
 function install_font() {
 	log INFO "Installing font hack-nerd..."
 	cd /home/${USER}/.cooking/
-	wget -O hack-nerd.zip https://github.com/ryanoasis/nerd-fonts/releases/download/v3.3.0/Hack.zip
+	wget -O hack-nerd.zip https://github.com/ryanoasis/nerd-fonts/releases/download/v3.4.0/Hack.zip
 	unzip hack-nerd.zip
 	sudo mkdir -p /usr/local/share/fonts/hack-nerd
 	sudo mv *.ttf /usr/local/share/fonts/hack-nerd/
