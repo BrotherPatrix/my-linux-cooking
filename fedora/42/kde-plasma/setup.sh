@@ -142,7 +142,7 @@ function install_sdkman_and_candidates() {
 	echo "java=21.0.8-oracle" >> .sdkmanrc
 	echo "maven=3.8.9" >> .sdkmanrc
 	echo "maven=3.9.11" >> .sdkmanrc
-	source ~/.bashrc && sdk env install && sdk default java 21.0.6-oracle && sdk default maven 3.9.9 \
+	source ~/.bashrc && sdk env install && sdk default java 21.0.8-oracle && sdk default maven 3.9.11 \
 		|| log ERROR 'Could not install Java and Maven candidates...' 1
 	log SUCC "Installed Java and Maven candidates."
 }
