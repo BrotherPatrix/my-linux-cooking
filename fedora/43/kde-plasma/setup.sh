@@ -89,7 +89,7 @@ function install_dnf_packages() {
 	log SUCC "Installed zellij."
 
 	log INFO "Installing eza..."
-	wget -qO- https://github.com/eza-community/eza/releases/download/v0.23.0/eza_x86_64-unknown-linux-gnu.tar.gz \
+	wget -qO- https://github.com/eza-community/eza/releases/download/v0.23.4/eza_x86_64-unknown-linux-gnu.tar.gz \
 		| sudo tar -xz -C /usr/local/bin ./eza || log ERROR 'Could not install eza...' 1
 	log SUCC "Installed eza."
 
@@ -118,7 +118,7 @@ function install_flatpaks() {
 
 function install_nvm() {
 	log INFO "Installing nvm ..."
-	wget -O /home/${USER}/.cooking/nvm-install.sh https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.3/install.sh
+	wget -O /home/${USER}/.cooking/nvm-install.sh https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.3/install.sh
 	bash /home/${USER}/.cooking/nvm-install.sh
 	log SUCC "Installed nvm."
 
@@ -134,15 +134,15 @@ function install_sdkman_and_candidates() {
 	log SUCC "Installed sdkman."
 
 	log INFO "Installing Java and Maven candidates ..."
-	echo "java=8.0.462-zulu" > .sdkmanrc
-	echo "java=11.0.26-zulu" >> .sdkmanrc
-	echo "java=17.0.16-zulu" >> .sdkmanrc
+	echo "java=8.0.472-zulu" > .sdkmanrc
+	echo "java=11.0.29-zulu" >> .sdkmanrc
+	echo "java=17.0.17-zulu" >> .sdkmanrc
 	echo "java=17.0.12-oracle" >> .sdkmanrc
-	echo "java=21.0.8-zulu" >> .sdkmanrc
-	echo "java=21.0.8-oracle" >> .sdkmanrc
+	echo "java=21.0.9-zulu" >> .sdkmanrc
+	echo "java=21.0.9-oracle" >> .sdkmanrc
 	echo "maven=3.8.9" >> .sdkmanrc
 	echo "maven=3.9.11" >> .sdkmanrc
-	source ~/.bashrc && sdk env install && sdk default java 21.0.8-oracle && sdk default maven 3.9.11 \
+	source ~/.bashrc && sdk env install && sdk default java 21.0.9-zulu && sdk default maven 3.9.11 \
 		|| log ERROR 'Could not install Java and Maven candidates...' 1
 	log SUCC "Installed Java and Maven candidates."
 }
